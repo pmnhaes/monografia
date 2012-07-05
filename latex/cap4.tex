@@ -1,204 +1,169 @@
 \chapter{ESTUDO DE CASO}
 
-Este capítulo apresenta um estudo de caso com a implantação de um ambiente de Integração Contínua no projeto da Biblioteca Digital da Rede Nacional de Pesquisa e Inovação (RENAPI). Este estudo de caso foi idealizado devido ao fato do processo de Integração Contínua realizado no Núcleo de Pesquisa em Sistema de Informação (NSI) do IFF-Campos apresentar problemas, junto com o ideal de melhorar a prática de integração no grupo.
+Este capítulo apresenta um estudo de caso do CloudOoo e sua implantação num ambiente limpo.
 
-\section{Ambiente estudado}
+Para este estudo foram escolhidas duas formas de instalação: a primeira a partir do uso do SlapOs, e a segunda a partir do uso direto do \textit{buildout}. Não existe praticamente diferença entre ambas as instalações, exceto pelo tempo que levam, e configuração final.
 
-O estudo de caso deste trabalho foi realizado no NSI. O NSI surgiu em abril de 2002 e desde essa época vem utilizando e estimulando o uso de tecnologias de software livres.
+Além disso este caso de uso também apresenta uma avaliação quanto a forma de desenvolvimento do CloudOoo em comparação a sua versão anterior e do uso de metodologias ágeis.
 
-Durante a fase de criação deste estudo de caso, o núcleo contava com 32 bolsistas, subdivididos entre vários projetos. Dois destes projetos estavam diretamente relacionados com este trabalho: o projeto da Biblioteca Digital da RENAPI e o Quali-Ágil.
+\section{Ambiente de desenvolvimento}
 
-O portal da Biblioteca Digital da RENAPI visa disponibilizar um acervo bibliográfico digital de maneira a contribuir para a disseminação do material científico e tecnológico produzido na rede de Instituições de Educação Profissional Científica e Tecnológica (EPCT) - como artigos, monografias, dissertações, teses e periódicos, promovendo a disseminação nacional e internacional deste conteúdo, visando colaborar na qualificação do material humano da rede e na disseminação de conhecimento.
+A parte de estudo apresentada neste trabalho foi desenvolvida no NSI e contou com a disponibilidade de uma maquina com processador Intel Core I5 CPU 650 3.20 x4, 4GB de memória RAM, 320GB de HD.
 
-O Quali-Ágil é um projeto, que visa o estudo e desenvolvimento de ferramentas e metodologias para aumentar a qualidade de projetos de software que usam metodologias ágeis.
+Como sistema operacional foi selecionado o Ubuntu 12.04, utilizado praticamente em todas as maquinas do ambiente.
 
-A Biblioteca Digital é um dos projetos mais importantes do NSI. Por tal motivo, ele precisa ser estável e confiável, devido a seu grande porte e visibilidade. Para alcançar tais objetivos, a Integração Contínua é uma boa prática. O papel do Quali-Ágil neste trabalho foi ajudar no gerenciamento e implantação do ambiente de Integração Contínua.
+Para instalação via SlapOs, definimos a instalação do próprio como pré-requisito, sendo este dependente de que o sistema disponha do Python instalado, em qualquer versão pois o SlapOs instala seus requisitos de funcionamento.
 
-\section{Situação anterior}
+Da mesma maneira o Python 2.6 e o git são os únicos requisitos para instalação pelo uso do \textit{buildout}, pois através dele e do uso da biblioteca \textit{boostrap} é possível gerar o \textit{script bin/buildout}.
 
-O NSI não tinha um processo de Integração Contínua consistente. O processo era feito da seguinte maneira: O Buildbot, servidor de Integrção Contínua utilizado pelo NSI, não tinha o papel característico dos servidores de integração, cuja tarefa é fiscalizar o repositório à procura de mudanças. O Buildbot ficou responsável por executar o \textit{script} de \textit{build} em um determinado horário todos os dias, caracterizando o mecanismo de \textit{build} programado. Da forma como era feita a integração no NSI, o modelo de integração utilizado era o Assíncrono.
+\section{Processo de instalação}
 
-O \textit{script} de \textit{build} criado utilizava o Buildout\footnote{http://www.buildout.org/}, sendo esta uma ferramenta \textit{open source} de construção de software criada em Python\footnote{http://www.python.org/}, fornecendo suporte à criação de aplicações.
+Como citado anteriormente toda a estrutura é gerada pelo \textit{Buildout}, e depende da existência de uma inalação do Python no sistema, neste caso foi utilizado o Python 2.6 em ambas.
 
-Quando chegava a hora do \textit{build} ser executado, ele compilava todo o sistema e executava a suíte de testes. Caso algum teste falhasse, a equipe de desenvolvimento recebia um e-mail, sendo este o mecanismo de \textit{feedback} escolhido, com a notificação da falha do \textit{build}.
+\subsection{Instalação via SlapOs}
 
-\section{Problemas}
+Esta instalação foi realizada a partir da modificação do tutorial de instalação do ERP5 no SlapOs, disponível em \url{http://www.erp5.com/user-Install.ERP5.With.SlapOS/user-Install.ERP5.With.SlapOS}, o qual passa por modificações frequentes em função da atulização desta ferramenta.
 
-Uma recomendação para ambientes que usam a Integração Contínua é sempre manter a base de dados estável. Por indisciplina da equipe esta recomendação não era atendida já que, toda vez que algum teste não passava, a equipe recebia a notificação pelo e-mail e mesmo assim o código do repositório ficava inconsistente por muito tempo. A medida correta a ser tomada era corrigir o erro o quanto antes, entretanto o que acontecia era a persistência do erro por dias, ou até mesmo, meses.
+Nas próximas subseções será representado o tutorial encontrado nesta pagina, modificando porém que invés da instalação do ERP5, será modificado para instalar o CloudOoo.
 
-Ademais, como a execução do \textit{build} acontecia somente à noite, caso o mesmo viesse a falhar, a tarefa de descobrir a localização do erro era mais difícil. Muitos \textit{commits} eram realizados no período da tarde, todavia nenhum deles ativava o \textit{script} de \textit{build}. Dessa forma, quando o \textit{build} quebrava, era mais difícil saber qual \textit{commit} fez o \textit{build} falhar, visto que foram realizados vários envios de código naquele determinado dia.
+\subsubsection{Instalação do SlapOs}
 
-O \textit{feedback} da integração não era instantâneo, já que o \textit{build} era programado e só era executado em determinado horário do dia. Logo, para o desenvolvedor saber se a alteração que ele enviou para o repositório foi integrada corretamente, ele precisava esperar até o outro dia para saber o resultado da integração.
+Está instalação é padrão para qualquer ferramenta que utilize o SlapOS.
 
-Além disso, a idéia do botão da integração não era completa, pois não se conseguia ter software funcional com apenas o clique de um botão. De acordo com o princípio do botão da integração, com apenas um comando deve ser gerado software funcional. Para se obter o software final era necessário a realização de uma série de etapas manuais, o que não condiz com a idéia do botão da integração.
-
-\section{Proposta para implantação da Integração Contínua}
-
-Como a Biblioteca Digital é um projeto de grande porte que está em andamento, decidiu-se por utilizar o modelo de Integração Contínua Assíncrona por este ser de mais rápida implantação e adaptação, comparado com o modelo de integração Síncrono.
-
-O processo começava com os desenvolvedores obtendo o código do repositório da RENAPI para realizar as alterações. Após modificar o código fonte, os desenvolvedores executavam a suíte de testes à procura de falhas. Obviamente, se alguma falha fosse encontrada, eles teriam que corrigí-la. Caso contrário, eles enviariam o código alterado para o repositório da RENAPI.
-Nesse estágio, havia uma máquina de integração que possuia um servidor de Integração Contínua, o Hudson. Ele tinha como responsabilidade fiscalizar o repositório da RENAPI constantemente à procura de qualquer modificação no código fonte do projeto. Caso o Hudson encontrasse alguma alteração no repositório, ele iria resgatar e executar o \textit{script} de \textit{build} na máquina de integração. Toda suíte de testes era executada e, se alguma falha acontecesse, o \textit{build} falharia e a equipe de desenvolvimento receberia um e-mail avisando acerca da falha.
-
-O ambiente de Integração Contínua realizado no projeto pode ser visto na Figura \ref{componentes_estudo}
+O SlapOS é instalado na pasta raiz do sistema, assim requer privilégios para instalação. Assim como é possível notar na figura \ref{slapos-1}, cria-se uma pasta para instalação em \textit{/opt/slapos}, e também um arquivo de configuração do \ref{buildout}, após a criação com o uso do python é feita a execução do \textit{bootstrap} próprio da Nexedi.
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.7}{\includegraphics{figuras/componentes_estudo}}
-    \caption{Componentes do ambiente de Integração Contínua do estudo de caso.}
-    \label{componentes_estudo}
+    \scalebox{0.7}{\includegraphics{figuras/slapos-1}}
+    \caption{Primeira parta da instalação do SlapOS}
+    \label{slapos-1}
 \end{figure}
 
-\section{Como foi feita a implantação}
+Com o termino do \textit{bootstrap} e o \textit{ script bin/buildout} é feita a instalação do SlapOS.
 
-Para a implantação foi alocada um máquina com processador Pentium 4, 2 GB de Memória RAM e 80 GB de HD. Nesta máquina foi instalado o sistema operacional Debian 5, o mesmo utilizado pelo sistema em produção.
-
-A máquina de integração era totalmente virgem, ou seja, só foi instalado o Debian 5, o Hudson versão 1.357, bem como o Java que é dependência do servidor Hudson. Para instalar o Hudson foi necessário adicionar a chave do repositório Hudson ao sistema com os comandos apresentados na Figura \ref{comandos_chave}.
+Após a instalação basica dos componentes e dependências é preciso configurar o mesmo, na figura \ref{slapos-2}, existe um exemplo de arquivo de configuração e logo em seguida na figura \ref{slapos-rede}, é feita a configuração de rede para uso do SlapOS, é necessário que o \textit{slapproxy} seja iniciado e mantido rodando, ele representa funcionalidades do \textit{master} do SlapOS.
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.7}{\includegraphics{figuras/comandos_chave}}
-    \caption{Comandos para adicionar chave do repositório Hudson}
-    \label{comandos_chave}
+    \scalebox{0.7}{\includegraphics{figuras/slapos-2}}
+    \caption{arquivo de configuração do SlapOS}
+    \label{slapos-2}
 \end{figure}
-
-Após isto, bastou somente instalar o Hudson através dos seguintes comandos, como mostra a Figura \ref{comandos_hudson}:
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.7}{\includegraphics{figuras/comandos_hudson}}
-    \caption{Comandos para instalar o Hudson}
-    \label{comandos_hudson}
+    \scalebox{0.7}{\includegraphics{figuras/slapos-rede}}
+    \caption{Configurações de rede do SlapOS}
+    \label{slapos-rede}
 \end{figure}
 
-Instalando o Hudson dessa forma, ele pode ser atualizado pelo gerenciador de pacote do Debian, o apt-get, o que viabiliza o uso da última versão deste servidor de Integração Contínua.
+É valido recordar que o SlapOS é uma ferramenta já adaptada ao IPV6, e é necessário adicionar uma configuração extra ao \textit{script /etc/network/interfaces} para habilitar as funcionalidades IPv6 do SlapOS. Por fim nas duas ultimas linhas da figura \ref{slapos-rede} são executados os \textit{scripts slapformat e slapgrid}, eles são responsáveis por registrar seu computador e devidos \ref{slots} e por habilitar o cliente SlapOS em seu computador, respectivamente.
 
-Devidamente instalado, o Hudson foi acessado pela porta 8080, atráves do endereço \textit{http://localhost:8080}. A tela principal do Hudson, pode ser vista na Figura \ref{hudson_principal}
+\subsubsection{Instalação do CloudOoo}
+
+Após realizada a instalação do SlapOS, o passo de instalação de ferramentas através do mesmo é consideravelmente simples.
+
+Para requerer a instalação do CloudOoo é necessário utilizar o \textit{slapconsole}, assim através do mesmo e uma instância do SlapOS(\textit{slap}), referenciada na terceira linha da figura \ref{requisicao-software}, assim como no uso do \ref{bootstrap}, esta instalação também aponta para um link que é carregado e compilado.
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.6}{\includegraphics{figuras/hudson_principal}}
-    \caption{Tela principal do Hudson}
-    \label{hudson_principal}
+    \scalebox{0.7}{\includegraphics{figuras/requisicao-software}}
+    \caption{Requisição de instalação do CloudOoo no SlapOS}
+    \label{requisicao-software}
 \end{figure}
 
-O primeiro passo foi fazer a configuração da notificação de e-mail. Caso houvesse alguma falha no \textit{build}, a equipe de desenvolvedores deveria receber um e-mail de notificação da quebra do \textit{build}. Para configurar tal notificação acessou-se o \textit{link} ``Gerenciar Hudson'' na tela principal do Hudson e logo após o ítem ``Configurar Sistema''.
+Nesta referência em particular o ponteiro esta voltado para o \textit{branch} do CloudOoo, em função de suas configurações próprias que não foram encorporadas ao projeto do SlapOS.
 
-Na seção ``Notificação de E-mail'' o campo ``Servidor SMTP'' foi preenchido com o respectivo servidor de SMTP e o campo ``Endereço de E-mail do Administrador do Sistema'' foi preenchido com o e-mail do responsável pela administração do Hudson. A seção ``Notificação de E-mail'' é demonstrada na Figura \ref{notificacao_email}.
+Por fim para que ocorra a instalação dos componentes e dependências é utilizado o \textit{script slapgrid-sr}.
+
+Após a instalação é necessário requerer uma instância, o que também ocorre pelo uso do \textit{slapconsole} de forma praticamente identica a instalação, no entanto é necessário fornecer um título a sua instância e é possível verificar se a mesma foi criada requerindo seu \textit{id}.
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.7}{\includegraphics{figuras/notificacao_email}}
-    \caption{Tela de configuração da Notificação de E-mail no Hudson}
-    \label{notificacao_email}
+    \scalebox{0.7}{\includegraphics{figuras/requisicao-instancia}}
+    \caption{Requisição de uma instância do CloudOoo via SlapOS}
+    \label{requisicao-instancia}
 \end{figure}
 
-Feita a configuração da notificação de e-mail, foi instalado o \textit{plugin} do Selenium\footnote{http://seleniumhq.org/}, que é um \textit{framework} para automatização de testes para aplicações \textit{Web}, sendo este usado nos testes de aceitação do projeto da Biblioteca Digital. Para instalar este \textit{plugin} acessou-se o link ``Gerenciar Hudson'' na tela principal do Hudson e logo após o ítem ``Gerenciar Plugins''. Em seguida foi acessada a aba ``Disponíveis''. Nesta aba, aparecem todos os \textit{plugins} que o Hudson oferece para instalação. Na seção ``Cluster Manegement and Distributed Build (Gerenciamento de \textit{Cluster} e \textit{Build} Distribuído)'' instalou-se o ``Selenium Plugin'', que é responsável por inicializar este \textit{framework}. A instalação do ``Selenium Plugin'' pode ser vista na Figura \ref{selenium_plugin}
+Por fim é utilizado o \textit{script slapgrid-cp} para que a criação da instâcia ocorra e seja finalizada. Após o uso da mesma será iniciado um servidor do CloudOoo pelas configurações estabelecidas no software.
+
+\subsection{Instalação do CloudOoo.git}
+
+Esta segunda instalação foi criada para ser mais flexível aos projetos do NSI que também utilizam o CloudOoo. Ela esta disponível no Github do NSI, em \url{http://github.com/nsi-iff/cloudooo_buildout.git}, e possui um README com instruções para instalação. Além disso esta instalação esta orientada a fazer download do repositório igualmente disponível no Github do NSI, em \url{http://github.com/nsi-iff/cloudooo}.
+
+São necessárias apenas duas instruções para esta instalação, presentes na figura \ref{buildout-cloudooo}:
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.65}{\includegraphics{figuras/selenium_plugin}}
-    \caption{Tela de instalação do ``Selenium Plugin'' no Hudson}
-    \label{selenium_plugin}
+    \scalebox{0.7}{\includegraphics{figuras/buildout-cloudooo}}
+    \caption{README do buildout do CloudOoo, disponível em \url{http://github.com/nsi-iff/cloudooo_buildout}}
+    \label{buildout-cloudooo}
 \end{figure}
 
-Após a instalação desse \textit{plugin}, acessou-se no menu lateral esquerdo da tela principal o ítem ``Gerenciar Hudson'', sucedido do ítem ``Manage Nodes (Gerenciamento de Nós)'', que apresenta uma tela de configuração e criação de novos nós. No menu lateral esquerdo, há o ítem ``New Node (Novo Nó)'' que representa a criação de um novo nó. Clicou-se nele e na tela posterior foi preenchido o campo ``Node name (Nome do Nó)'' com o conteúdo ``Selenium Grid'' e selecionado a opção ``Dumb Slave'', como mostra a Figura \ref{hudson_novo_no}.
+Na primeira etapa utiliza-se o Python para fazer download e rodar o \textit{script} do \textit{boostrap.py}, este irá fazer o download e instalação dos componentes necessários para gerar o buildout. 
+
+Ao termino da primeira, com o \textit{script bin/buildout} acrescido de argumentos para torná-lo verboso e do arquivo padrão de instalação(\textit{buildout.cfg}), ocorre a instalação do CloudOoo e todos os componentes necessários, entre ele o LibreOffice, FFMPEG, ImageMagick e demais.
+
+Diferentemente da instalação via SlapOs o servidor do CloudOoo não fica disponível automaticamente para uso, é preciso ainda utilizar o \textit{script bin/supervisord}.
+
+\section{Processos de requisições}
+
+Para estabelecer conexão entre um cliente qualquer e o CloudOoo é necessário o uso de uma biblioteca XMLRPC. Na figura \ref{conexao} foi realizado um exemplo de cada requisição básica disponível para todos \textit{handlers}, através de uma conexão(\textit{conexao_CloudOoo}) estabelecida pela biblioteca \textit{xmlrpclib}:
 
 \begin{figure}[ht]
     \centering
-    \scalebox{0.7}{\includegraphics{figuras/hudson_novo_no}}
-    \caption{Tela de criação de nós no Hudson}
-    \label{hudson_novo_no}
+    \scalebox{0.7}{\includegraphics{figuras/conexao}}
+    \caption{Exemplo prático de uso do CloudOoo}
+    \label{conexao}
 \end{figure}
 
-Na tela seguinte foi nescessário configurar o números de processos concorrentes no processador, para isso foi preenchido o campo ``Número de executores'' com o valor ``10'', ou seja, será permitido 10 processos concorrentes do Selenium no processador. Após isso, o campo ``Diretório de trabalho do sistema remoto'' foi preenchido com o caminho do diretório onde o Hudson deposita seus arquivos de configuração. Em ``Uso'' selecionou-se a opção ``Leave this machine for tied jobs only (Deixar esta máquina somente para trabalhos amarrados)'', o que significa que o nó somente será utilizado quando este for configurado por uma determindada tarefa, permanecendo os demais campos com o valor padrão. Esta configuração pode ser observada na Figura \ref{configuracao_no}.
+Na linha 6 da figura a variável \textit{arquivo} recebe o conteúdo do arquivo \textit{test.ogv}, no entanto para conversão do mesmo, na linha 8, é preciso codificá-lo para que durante a passagem do cliente para o servidor esse arquivo não seja danificado, esta codificação  realizada pelo uso da biblioteca \textit{base64}.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.6}{\includegraphics{figuras/configuracao_no}}
-    \caption{Tela de configuração de nós no Hudson}
-    \label{configuracao_no}
-\end{figure}
+No momento da conversão o servidor vai receber os dados do cliente, vai decodificar o arquivo e identificá-lo como um arquivo de vídeo, sendo assim o mesmo será encaminhado para o \textit{FFMPEGHandler}, que por sua vez irá convertê-lo para o formato \textit{mpeg}.
 
-O próximo passo foi iniciar o nó recém criado, Selenium Grid. Para isso foi pressionado o botão ``Launch (Iniciar)'', e salvo o arquivo ``slave-agent.jnlp'' no mesmo diretório configurado no campo ``Diretório de trabalho do sistema remoto''. Após isso, foi colocado no arquivo /etc/rc.local a linha de comando ``javaws /home/nsi/slave-agent.jnlp'', linha esta que faz com que o Selenium Grid seja inicializado automaticamente, evitando a inicialização manual toda vez que a máquina for ligada.
+o \textit{FFMPEGHandler} também será o responsável pelos métodos de \textit{getFileMetadataItemList} e \textit{updateFileMetadata}, nos quais serão realizados respectivamente a extração e inserção de \textit{metadados} no arquivo.
 
-Depois da configuração do Selenium, acessou-se o link ``Nova Tarefa'' no menu lateral esquerdo da tela principal. Nesta tela, colocou-se o nome da tarefa como ``Biblioteca Digital'' e escolheu-se a opção ``Construir um projeto de software free-style'', como mostra a Figura \ref{hudson_nova_tarefa}.
+Observe também que na segunda extração de \textit{metadados}, linha 17, foi utilizado o \textit{arquivo_atualizado}, resposta da requisição de inserção de \textit{metadados}, linha 15, de forma direta. Isto porque esta requisição do CloudOoo retorna um arquivo como os dados inseridos no mesmo, e que já se encontra codificado para transporte.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/hudson_nova_tarefa}}
-    \caption{Tela de criação de tarefas no Hudson}
-    \label{hudson_nova_tarefa}
-\end{figure}
+Além destas requisições comuns a todos os \textit{handlers} existem também requisições que foram previamente implantadas apenas para documentos:
 
-Após preencher os dados requisitados, clicou-se em ``OK'' e uma nova tela foi aberta com dados para configuração da nova tarefa. Na opção ``Tie this project to a node (Amarrar este projeto a um nó)'' escolheu-se o nó criado anteriormente, no caso o Selenium Grid, como demonstra a Figura \ref{configuracao_tarefa_selenium}.
+\begin{itemize}
+    \item{getAllowedExtensionList: retorna extensões permitidas para determinado arquivo;}
+    \item{getChapterItem: retorna o capítulo selecionado do documento;}
+    \item{getChapterItemList: retorna todos capítulos do documento;}
+    \item{getColumnItemList: retorna colunas da tabela selecionada;}
+    \item{getImage: retorna imagem selecionada;}
+    \item{getImageItemList: retorna lista de imagens em documento;}
+    \item{getLineItemList: retorna lista de linhas da tabela selecionada;}
+    \item{getParagraph: retorna parágrafos selecionado;}
+    \item{getParagraphItemList: retorna lista de parágrafos de um documento;}
+    \item{getTable: retorna tabela selecionada;}
+    \item{getTableItemList: retorna lista de tabelas no documento;}
+    \item{system.listMethod: retorna lista de métodos disponíveis no servidor.}
+\end{itemize}
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/configuracao_tarefa_selenium}}
-    \caption{Tela de uma tarefa sendo ligada ao Selenium}
-    \label{configuracao_tarefa_selenium}
-\end{figure}
+\section{Performasse}
 
-O próximo passo foi configurar o Sistema de Controle de Versão utilizado pelo projeto da Biblioteca Digital, o Subversion. Na seção ``Gerenciamento de Código Fonte'' foi selecionado a opção ``Subversion'', preencheu-se o campo ``URL do projeto'' com o endereço onde se encontra o repositório da Biblioteca Digital. A opção ``Usar atualização'' foi marcada, para que a cada \textit{build} os arquivos do repostório sejam atualizados automaticamente. A Figura \ref{configuracao_tarefa_subversion} demostra este processo de configuração do Subversion.
+Para estabelecer a performasse o os antecessores do CloudOoo foi realizado um teste em ambos, neste teste 3699 documentos no formato odt foram selecionados, entre eles alguns documentos inválidos e outros em formatos desconhecidos. Por ser a conversão mais utilizada, foi decido que neste teste os documentos seriam convertidos para PDF.O teste foi realizado por meio do uso de \textit{script}, neles além de prover a conversão também era provido o armazenamento do tempo de cada conversão, bem como o tempo total que todas as conversões levaram em ambos.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/configuracao_tarefa_subversion}}
-    \caption{Tela de configuração do Subversion em uma tarefa}
-    \label{configuracao_tarefa_subversion}
-\end{figure}
+Ao final do teste notou-se que o OOOD 2.0 levará mais tempo para realizar as conversões separadamente, no entanto com o uso excessivo ele se mostrou mais estável e mais rápido, levou 10 horas para realizar o teste e apresentou 12 erros, enquanto o OOOD 1.0 apresentou 531 erros e levou 11 horas para realizar o teste.
 
-Na seção ``Disparadores de Construção'' foi marcada a opção ``Consultar periodicamente o SCM''. O campo ``Agenda'' que apareceu, foi preenchido com ``0,30 * * * *'', que segue o padrão Cron, o que significa que o Hudson fiscalizava o repositório no minuto ``0'' e ``30'' de cada hora, todos dias do mês, todos meses e todos dias da semana. Se alguma mudança acontecesse no repositório em alguma dessas fiscalizações, o \textit{build} era disparado. Essa configuração é visualizada na Figura \ref{configuracao_tarefa_consulta}.
+Para testar a performasse do CloudOoo 1.24 foram escolhidos dois testes distintos, primeiramente a repetição do teste anterior com 3699 documentos odt convertidos para PDF, para reanalisar sua performasse após suas mudanças e por segundo um novo teste com 3500 arquivos distintos sendo todos convertidos para formatos abertos equivalentes aos seus tipos específicos.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/configuracao_tarefa_consulta}}
-    \caption{Tela de configuração de fiscalização de repositório em um tarefa}
-    \label{configuracao_tarefa_consulta}
-\end{figure}
+[resultado dos testes] ???
 
-Na seção ``Construção'' foi escolhida a opção ``Add Build Step (Adicionar etapa de \textit{build})'' e depois a opção ``Executar shell''. A respectiva caixa da opção ``Executar shell'' foi preenchida com os comandos referentes ao \textit{build}. A Figura \ref{configuracao_tarefa_build} exibe esta etapa.
+\section{Processo de Desenvolvimento}
 
-Por último, na seção ``Ações pós-contrução'', marcou-se a opção ``Notificação de E-mail'' e no campo ``Destinatários'' colocou-se o endereço de e-mail de todos os desenvolvedores da equipe de desenvolvimento da Biblioteca Digital. A Figura \ref{configuracao_tarefa_email} demonstra como fazer esta configuração.
+Para \cite{PRESSMAN}, a garantia da qualidade de software de esta diretamente ligada ao emprego de testes sobre o mesmo, onde esses testes representam a expectativa do usuário sobre a aplicação, e podem ser empregados de forma automatizada ou manual. Embora testes automatizados tendam a gastar mais tempo em relação a programação dos mesmos, sua cobertura sobre o produto garante menor porcentagem de erros quando executada a aplicação.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/configuracao_tarefa_build}}
-    \caption{Tela com comandos de execução de um \textit{build} em uma tarefa}
-    \label{configuracao_tarefa_build}
-\end{figure}
+Desde o inicio de parceria de desenvolvimento do CloudOoo tem sido aplicada a técnica chamada TDD(\textit{Test-Driven Development}), ou desenvolvimento orientado a testes, nela é defendido o desenvolvimento dos testes antes do desenvolvimento da parte funcional da aplicação, dado que os testes também fazem parte da mesma.
 
-Portanto, esta tarefa foi configurada para obter os arquivos do repositório, executar o \textit{script} de \textit{build}, executar testes e enviar e-mail em caso de quebra do \textit{build}.
+Segundo \cite{ASTELS}, projetos que utilizam TDD devem possuir uma suíte exaustiva de testes que por sua vez determinam o código que deve ser escrito. No entanto para uma aplicação de serviço web, existe certo grau de dificuldade de começar do zero apenas com testes, tendo por justificativa suas dependências como outras aplicações bem como a rede utilizada por este. Mesmo assim desde a parceria implementada ao CloudOoo anteriormente, até seu estado atual seu desenvolvimento tem partido do principio de realizar testes antes de implementar suas funcionalidades. Isto porque, além da garantia de qualidade, o uso de testes nele serviu de auxilio ao desenvolvimento dado todos as configurações que devem ser estabelecidas para funcionamento deste. Entre elas o próprio padrão das aplicações externas que não estão ligadas diretamente ao sistema operacional do servidor e que precisam ser apontadas por meio de \textit{scripts}.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/configuracao_tarefa_email}}
-    \caption{Tela com configuração de envio de e-mail em uma tarefa}
-    \label{configuracao_tarefa_email}
-\end{figure}
+Além do testes, outra ferramenta que garante o desenvolvimento do CloudOoo é o uso de sistemas de controle de versão, como o \textit{subversion}, que era utilizado na versão 2.0, e que atualmente foi trocado pelo \textit{git} em função de suas diversas vantagens como o controle de versões distribuído por exemplo. A importância do controle de versão esta no controle do crescimento desta aplicação, que por momentos contou com uma equipe de desenvolvimento sem contato constante, assim por meio de ferramentas como estas podiam acompanhar as modificações da aplicação, bem como reverter determinadas alterações em casos de erros posteriores na mesma.
 
-\section{Dificuldades para a implantação}
+Sob certo ponto de vista o uso destas práticas sugere sobre o desenvolvimento do CloudOoo severas semelhanças com os métodos ágeis, muito embora não exista a definição propriamente dita de nenhuma delas aplicadas diretamente sobre o projeto.
 
-Uma dificuldade encontrada foi com o \textit{script} de \textit{build}. Para configurar todo o sistema no \textit{script}, foi necessário um esforço maior do que o esperado. O \textit{script} apresentou problemas que exigiram bastante dos desenvolvedores, como por exemplo alguns trechos de código que estavam estáticos, assim dificultando a dinamização do \textit{build}.
+Em seu artigo \cite{SILVA-MONNERAT-CARVALHO}, comprovam o uso do TDD no CloudOoo, e de suas complicações de emprego, uma vez que inicialmente não existia total proficiência por parte dos desenvolvedores. Além disso foi verificado sobre o estabilidade do desenvolvimento do projeto, tomando por base a lista de mudanças armazenadas pelo controle de versão. Observou-se através deste artigo que embora no incio do projeto nenhum teste falhasse, conforme o mesmo foi acrescido de mudanças e novas funcionalidades testes que antes passavam passaram a apresentar erros antes não conhecidos, precisando assim de correções.
 
-Além disso, como o NSI possui muitos desenvolvedores e pesquisadores, alocar a máquina de integração tornou-se uma tarefa difícil. Como a máquina de integração era um computador pessoal (\textit{desktop}), ela ocupava o espaço que um desenvolvedor ocuparia. Aliado a isto, como a máquina deve ser usada exclusivamente para a integração do sistema, nenhuma pessoa deveria fazer uso da máquina.
-
-Outra dificuldade que tomou bastante tempo foi o fato dos testes do projeto estarem falhando. Como o \textit{script} de \textit{build} executava todos os testes do sistema, foram descobertos alguns erros. Logo, como deve-se sempre manter o repositório consistente, alguns dias foram necessários para consertar os erros, inclusive para que o processo começasse de forma correta.
-
-\section{Resultados obtidos}
-
-No estudos de caso desse trabalho foi utilizado um Sistema de Controle de Versão chamado Subversion, que se encontra no endereço https://svn.renapi.org/bd.
-
-O repositório de código era monitorado, e caso alguma mudança fosse detectada, o \textit{script} de \textit{build} era executado, realizando a instalação dos módulos, a execução dos testes, bem como o \textit{deployment} do sistema.
-
-O \textit{build} é auto-testável, ou seja, fazia com que toda a integração do sistema fosse mais facilmente testada.
-
-Uma máquina de integração foi alocada exclusivamente para o processo de integração. Ela não foi utilizada por nenhum desenvolvedor da equipe e continha somente os requisitos necessários para a integração do sistema.
-
-\section{Problemas remanescentes}
-
-A execução dos testes de cada módulo do sistema fez com que testes unitários e de aceitação fossem executados juntos. Com isso, inúmeras inicializações do Selenium eram feitas para execução dos testes de aceitação de cada módulo, acarretando em um tempo maior de \textit{build}. Essas inicializações ocorriam pelo fato do processo do Selenium ser inicializado e finalizado para cada módulo, ou seja, um único processo não poderia ser aproveitado pelos demais módulos. Logo, esse transtorno do Selenium e a alta complexidade do projeto, fizeram com que a integração de apenas cinco módulos estivesse em torno de quarenta minutos.
-
-O sistema inteiro ainda não estava sendo integrado completamente. Somente uma parte do projeto estava inserida no processo de Integração Contínua. Isso ocorria porque integrar todo o sistema iria aumentar exageradamente o tempo de execução do \textit{build}.
-
-O Hudson, que estava sendo executado na máquina de integração, não podia ser visto pelos desenvolvedores da equipe que estivessem fora do IFF. O ideal era que de qualquer lugar, qualquer pessoa pudesse ver como estava a situação do \textit{build} naquele momento.
+Estas implicações trazem ao meio de software uma compreensão muito similar ao do ramo de indústria, no que se desrespeita a aplicação de novas técnicas para garantir que quando um produto chega ao meio de produção possa continuar estável ao uso.
