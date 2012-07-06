@@ -194,6 +194,7 @@ Este pacote teve inicio em 2000, quando a Sun Microsystems liberou o código de 
 Assim no inicio de 2011 foi lançado o LibreOffice 3.3, que bem como o OpenOffice.org 2.0, já suportava a edição da suíte \textit{OpenDocument}.
 
 \subsection{UNO}
+\label{uno}
 
 O projeto OpenOffice.org possui uma característica muito útil e pouco utilizada que é a capacidade de integrar seu funcionamento com outros aplicativos. Isto é possível através do UNO (Universal Network Objects), que é um modelo de componentes do OpenOffice.org.
 
@@ -203,7 +204,11 @@ Atualmente existem \textit{bindings} para as linguagens C, C++, Java e Python. D
 
 \subsubsection{PyUNO}
 
-O PyUNO, citado anteriormente, é uma extensão do LibreOffice capaz de fazer uma ponte entre o mesmo e aplicações escritas em python. Abaixo, na Figura \ref{exemple_uno} é possível ver um exemplo pratico do uso do PyUNO em um código python:
+O PyUNO representa uma ``ponte'' entre o LibreOffice e aplicações Python. Através dele é possível a manipulação do componente UNO, seção \ref{uno}, para utilizar praticamente todas funcionalidades disponíveis no LibreOffice por \textit{scripts} Python.
+
+No entanto, segundo \cite{PYUNO}, essa ferramenta ainda não atingiu seu uso absoluto podendo conter diversos \textit{bugs}, e assim dependendo em grande parte de coloboração por parte da comunidade que utiliza a mesma.
+
+Na Figura \ref{exemple_uno} é possível ver um exemplo pratico do uso do PyUNO em um código python:
 
 \begin{figure}[ht]
     \centering
@@ -212,7 +217,7 @@ O PyUNO, citado anteriormente, é uma extensão do LibreOffice capaz de fazer um
     \label{exemple_uno}
 \end{figure}
 
-Na figura é possível observar passo a passo o código python, atentando aos comentários, neste exemplo ele utiliza o LibreOffice em \textit{localhost}, ou seja, suas modificações são apenas realizadas na própria maquina, no entanto, no caso de um serviço web é possível passar o endereço do mesmo e alterar a porta utilizada para estabelecer comunicação.
+Nela é possível observar passo a passo o código python, atentando aos comentários, neste exemplo ele utiliza o LibreOffice em \textit{localhost}, ou seja, suas modificações são apenas realizadas na própria maquina, no entanto, no caso de um serviço web é possível passar o endereço do mesmo e alterar a porta utilizada para estabelecer comunicação.
 
 \section{ImageMagick}
 
@@ -247,7 +252,7 @@ Na realidade de simples o \textit{pdftk} tem apenas seu uso, é uma ferramenta d
 
 \section{FFMPEG}
 
-Para \cite{Zhang-Zeng-Xu-Guo-Yan-Wang}, a melhoria constante do uso do processamento de multimédia, requerida e obtida pela expansão multifuncional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideias para projetos escaláveis é o FFMPEG.
+Para \cite{FFMPEG-SCALABLE}, a melhoria constante do uso do processamento de multimédia, requerida e obtida pela expansão multifuncional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideias para projetos escaláveis é o FFMPEG.
 
 Ffmpeg é um rápido conversor de vídeo e áudio que também consegue tratar informações momentâneas de ambos. Ele também pode converter faixas arbitrarias de amostras e redimensionar vídeos através de filtros polifásicos de alta qualidade \cite{FFMPEG}.
 
@@ -299,17 +304,17 @@ Diferentemente do \textit{git}, o \textit{subversion} é um sistema de controle 
 
 Embora seja consideravelmente rápido, é extremamente desaconselhável para projetos grandes e principalmente desenvolvidos paralelamente.
 
-\subsection{SlapOS}
+\subsection{Biblioteca Digital}
 
-O SlapOS é um sistema operacional de código aberto para \textit{cloud computing} de rede distribuída que se baseia em que tudo se trata de um processo.
+A Biblioteca Digital da Rede Nacional de Pesquisa e Inovação(RENAPI), é um projeto que visa disponibilizar um acervo bibliográfico digital para contribuir com a disseminação de material científico e tecnológico produzido na rede de Educação Profissional Científica e Tecnológica(EPCT), sendo esse material periódicos, teses, monografias, artigos entre outros. Assim esse disseminação visa colaborar na qualificação do material humano digitalizado e na disseminação de conhecimento.
 
-Segundo \cite{SMETS-CERIN-COURTEAUD} este sistema combina computação em grade e ERP para fornecer infra-estrutura como serviço (IaaS), Plataforma como Serviço (PaaS) e Software como Serviço (SaaS) através de uma API simples e unificada que se pode aprender em questão de minutos.
-
-Dada sua abordagem unificada e arquitetura modular, ele tem sido usado como uma ferramenta de testes para benchmark de bancos de dados NoSQL e para otimização do processo de alocação em nuvem.
+Este projeto é um dos principais desenvolvidos no Núcleo de Pesquisa em Sistemas de Informação(NSI), que conta atualmente com ??? bolsistas e ??? pesquisadores.
 
 \subsection{ERP5}
 
-Um ERP é um sistema capaz de integrar processos e dados de uma organização, através de recursos tecnológicos que padronizam e automatizam os mesmos.
+Um ERP é capaz de integrar processos e dados de uma organização, através de recursos tecnológicos que padronizam e automatizam os mesmos.
+
+Muito seja um sistema propriamente dito, ele foca mais em processos do que em funcionalidades, ele mascará informações em funcionalidades transparentes(\cite{PITRE-DESAI}).
 
 No entanto, apesar de trazer muitas vantagens a organização, esse processo de automatização, de forma geral, é longo, de alto custo e complexidade, e até mesmo difícil de implementar.
 
@@ -318,4 +323,14 @@ De acordo com \cite{SMETS-CARVALHO}, esta situação que motivou a criação do 
 Ele também incorpora conceitos avançados como o de banco de dados orientados a objetos, um sistema de gerenciamento, de sincronização, variação, \textit{workflows}, e possibilita a implementação de \textit{Business Templates}.
 
 Compreende-se assim o ERP5, como sendo um ERP de baixo custo de implantação e alta tecnologia para pequenas e médias empresas.
+
+\subsection{SlapOS}
+
+O SlapOS é um sistema operacional de código aberto para o uso de redes distribuídas em computação em nuvem, que se baseia em que tudo se trata de um processo.
+
+Para \cite{SMETS-CERIN-COURTEAUD} a computação em nuvem é dividida em três camadas, infra-estrutura como serviço (IaaS), Plataforma como Serviço (PaaS) e Software como Serviço (SaaS). Na IaaS esta o funcionamento virtual da maquina e seu armazenamento, sob o ele é construido o Paas, que funciona como coração dos serviços, como servidor e bancos de dados. Finalmente sobre Paas estão as aplicações de uso do usuário.
+
+Através de uma API unificada e simples, que requer poucos minutos para aprendizagem, este sistema combina computação em grade e o conceito de ERP para fornecer estas categorias previstas na compução em nuvem.
+
+Dada sua abordagem unificada e arquitetura modular, ele tem sido usado como uma ferramenta de testes para benchmark de bancos de dados NoSQL e para otimização do processo de alocação em nuvem.
 

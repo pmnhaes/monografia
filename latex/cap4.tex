@@ -142,6 +142,28 @@ Além destas requisições comuns a todos os \textit{handlers} existem também r
     \item{system.listMethod: retorna lista de métodos disponíveis no servidor.}
 \end{itemize}
 
+\section{Uso do CloudOoo na Biblioteca Digital}
+
+Para disponibilizar seu acervo, a Biblioteca Digital tem como regra converter os arquivos recebidos seu formato livre compatível, para isso utiliza de requisições ao CloudOoo. Na figura \ref{submeter-bd}, existe um exemplo de submissão de arquivos, do tipo ???, o qual passára pela conversão através de uma requisição ao CloudOoo:
+
+\begin{figure}[ht]
+    \centering
+    \scalebox{0.7}{\includegraphics{figuras/submeter-bd}}
+    \caption{Pagina de submissão de documentos da Biblioteca Digital}
+    \label{submeter-bd}
+\end{figure}
+
+Na figura não é implicito o uso da ferramenta, uma vez que essa requisição só é realizada por formatos não livres. Outra funcionalidade implicita é a ``granularização'' realizada igualmente pelo CloudOoo. Desmonstrada na figura \ref{granulate}:
+
+\begin{figure}[ht]
+    \centering
+    \scalebox{0.7}{\includegraphics{figuras/granulate}}
+    \caption{Pagina de submissão de documentos da Biblioteca Digital}
+    \label{granulate}
+\end{figure}
+
+Os grãos extraidos pelo processo de ``granularização'' são separados em imagens e tabelas ???, e dispostos para visualização do usuário.
+
 \section{Performasse}
 
 Para estabelecer a performasse o os antecessores do CloudOoo foi realizado um teste em ambos, neste teste 3699 documentos no formato odt foram selecionados, entre eles alguns documentos inválidos e outros em formatos desconhecidos. Por ser a conversão mais utilizada, foi decido que neste teste os documentos seriam convertidos para PDF.O teste foi realizado por meio do uso de \textit{script}, neles além de prover a conversão também era provido o armazenamento do tempo de cada conversão, bem como o tempo total que todas as conversões levaram em ambos.
