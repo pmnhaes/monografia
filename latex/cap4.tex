@@ -57,13 +57,13 @@ Após a instalação basica dos componentes e dependências é preciso configura
     \label{slapos-rede}
 \end{figure}
 
-É valido recordar que o SlapOS é uma ferramenta já adaptada ao IPV6, e é necessário adicionar uma configuração extra ao \textit{script /etc/network/interfaces} para habilitar as funcionalidades IPv6 do SlapOS. Por fim nas duas ultimas linhas da figura \ref{slapos-rede} são executados os \textit{scripts slapformat e slapgrid}, eles são responsáveis por registrar seu computador e devidos \ref{slots} e por habilitar o cliente SlapOS em seu computador, respectivamente.
+É valido recordar que o SlapOS é uma ferramenta já adaptada ao IPV6, e é necessário adicionar uma configuração extra ao \textit{script /etc/network/interfaces} para habilitar as funcionalidades IPv6 do SlapOS. Por fim nas duas ultimas linhas da figura \ref{slapos-rede} são executados os \textit{scripts slapformat e slapgrid}, eles são responsáveis por registrar seu computador e devidos \textit{slots} e por habilitar o cliente SlapOS em seu computador, respectivamente.
 
 \subsubsection{Instalação do CloudOoo}
 
 Após realizada a instalação do SlapOS, o passo de instalação de ferramentas através do mesmo é consideravelmente simples.
 
-Para requerer a instalação do CloudOoo é necessário utilizar o \textit{slapconsole}, assim através do mesmo e uma instância do SlapOS(\textit{slap}), referenciada na terceira linha da figura \ref{requisicao-software}, assim como no uso do \ref{bootstrap}, esta instalação também aponta para um link que é carregado e compilado.
+Para requerer a instalação do CloudOoo é necessário utilizar o \textit{slapconsole}, assim através do mesmo e uma instância do SlapOS(\textit{slap}), referenciada na terceira linha da figura \ref{requisicao-software}, assim como no uso do \textit{bootstrap}, esta instalação também aponta para um link que é carregado e compilado.
 
 \begin{figure}[ht]
     \centering
@@ -108,7 +108,7 @@ Diferentemente da instalação via SlapOs o servidor do CloudOoo não fica dispo
 
 \section{Processos de requisições}
 
-Para estabelecer conexão entre um cliente qualquer e o CloudOoo é necessário o uso de uma biblioteca XMLRPC. Na figura \ref{conexao} foi realizado um exemplo de cada requisição básica disponível para todos \textit{handlers}, através de uma conexão(\textit{conexao_CloudOoo}) estabelecida pela biblioteca \textit{xmlrpclib}:
+Para estabelecer conexão entre um cliente qualquer e o CloudOoo é necessário o uso de uma biblioteca XMLRPC. Na figura \ref{conexao} foi realizado um exemplo de cada requisição básica disponível para todos \textit{handlers}, através de uma conexão estabelecida pela biblioteca \textit{xmlrpclib}:
 
 \begin{figure}[ht]
     \centering
