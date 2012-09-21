@@ -1,4 +1,4 @@
-\chapter{CONCEITOS BÁSICOS}
+\chapter{TECNOLOGIAS EMPREGADAS}
 \thispagestyle{empty}
 
 Este capítulo apresenta um conceito simplifica sobre cada ferramenta utilizada para o desenvolvimento desta aplicação, ou que utilize a mesma.
@@ -73,20 +73,23 @@ Embora tenha uma descrição um pouco mais complexa, esta figura esta representa
 Assim sendo, o \textit{subprocess} pode ser considerado um dos melhores módulos python para trabalhar com ambientes isolados.
 
 \subsection{Zope}
+\label{zope}
 
-Zope (Z Object Publishing Environment) é uma serviço web livre de código aberto desenvolvida em python \cite{ZOPE2}.
+Zope (Z Object Publishing Environment) é um serviço web livre de código aberto desenvolvido em python \cite{ZOPE2}.
 
-Zope já foi considerada a aplicação que popularizou o python, Não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o python \cite{UDELL}, no entanto se tornou muito extensa e complexa, com alto nível de taxa de aprendizagem, sendo mais tarde ofuscada pela ferramenta Djando em questão de popularidade. Mas essa expansão resultou na criação de vários produtos independentes que continuam facilitando na construção de aplicações python.
+Zope já foi considerado o responsável pela popularização o python, não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o python \cite{UDELL}, no entanto se tornou muito extenso e complexo, com alto nível de taxa de aprendizagem, sendo mais tarde ofuscado pela ferramenta Djando em questão de popularidade. 
+
+Apesar da diminuição em sua popularidade, consequentemente em seu uso, a expansão do Zope resultou na criação de vários produtos independentes que facilitam na construção de aplicações python.
 
 \subsubsection{Zope Interfaces}
 
-Como citado na sessão anterior, diversos pacotes Zope foram criados individualmente com intuito de auxiliar na criação de outras aplicações python, de forma a não deixá-la muito extensa ou pesada, entre elas a \textit{zope.interface} é uma aplicação independente escrita em python e mantida pela equipe Zope.
+Como citado na sessão \ref{zope}, diversos pacotes Zope foram criados individualmente com intuito de auxiliar na criação de outras aplicações python, de forma a não deixá-las muito extensas ou pesadas, entre elas a \textit{zope.interface} é uma aplicação independente escrita em python e mantida pela equipe Zope.
 
-O \textit{zope.interface} foi criado com intuito de permitir a comunicação entre qualquer componentes externos que possuissem uma \textit{Application Programming Interface} (API). A ideia de criar uma interface para os componentes de uma aplicação é uma forma quase elegante de resolver um antigo problema de tipagens dinâmicas tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
+A \textit{zope.interface} foi criada com intuito de permitir a comunicação entre qualquer componentes externos que possuissem uma \textit{Application Programming Interface} (API). A ideia de criar uma interface para os componentes de uma aplicação é uma forma quase elegante de resolver um antigo problema de tipagens dinâmicas tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
 
 \section{XML}
 
-O \textit{Extensible Markup Language} (XML) é um formato de texto simples para representação de informações sobre estruturas: documentos, dados, configurações, livros, transações, faturas entre outros. Foi derivado de um formato antigo chamado SGML (ISO 8879), para ser mais flexível ao uso Web \cite{W3C-XML}.
+O \textit{Extensible Markup Language} (XML) é uma linguagem em formato de texto simples para representação de informações sobre estruturas: documentos, dados, configurações, livros, transações, faturas entre outros. Foi derivada de um formato antigo chamado SGML (ISO 8879), para ser mais flexível ao uso Web \cite{W3C-XML}.
 
 Atualmente se tornou um dos formatos mais comuns para compartilhamento de informações em aplicações web, por ser simples de ser escrito e corresponder a um padrão comum ao HTML, que por muitos anos já vem sendo utilizado pelas mesmas.
 
@@ -96,13 +99,15 @@ Além disso este formato dispõe de outras vantagens como: padrão de \textit{ma
 
 O formato aberto é uma especificação publicada para armazenar dados digitais, mantido geralmente por uma organização de padrões não proprietária, e livre de limitações legais no uso.
 
-Um formato aberto deve ser tanto implementável em software proprietário quanto software livre, usando as licenças tipicas de cada um. Em contraste com o formato proprietário que é controlado e defendido por interesses particulares da empresa detentora de seus direitos. O objetivo principal dos formatos abertos é garantir o acesso a longo prazo aos dados sem incertezas atuais ou futuras no que diz respeito às diretas legais ou à especificação técnica. Um objetivo secundário dos formatos abertos é permitir a competição, em vez de permitir que o controle de um distribuidor sobre um formato proprietário iniba o uso de um produto de competição.
+Um formato aberto deve ser tanto implementável em software proprietário quanto software livre, usando as licenças tipicas de cada um. Em contraste com o formato proprietário que é controlado e defendido por interesses particulares de empresas proprietárias detentoras de seus direitos.
 
-\subsection{Formatos de Documentos}
+O objetivo principal dos formatos abertos é garantir o acesso a longo prazo aos dados sem incertezas atuais ou futuras no que diz respeito às diretas legais ou à especificação técnica. Um objetivo secundário dos formatos abertos é permitir a competição, em vez de permitir que o controle de um distribuidor sobre um formato proprietário iniba o uso de um produto de competição.
 
-Embora não seja considerado o formato ideal para documentos uma vez que não possui opções de formatação; tais como itálico e negrito, o \textit{.txt} é o formato aberto mais comum para arquivos de texto por ser pequeno e na maioria dos casos dispor de vários programas de edição.
+\subsection{Formatos abertos de Documentos}
 
-Em 01 de maio de 2005, surgiu o \textit{OpenDocument Format}(ODF), um conjunto de formatos para aplicações de escritório com o objetivo de padronizar os formatos abertos. Seu nome original era \textit{Open Document Format for Office Application}, uma iniciativa da \textit{Organization for the Advancement of Structured Information Standards}(OASIS) em cima da base XML criada por desenvolvedores do OpenOffice.org, na época uma das poucas aplicações capazes de utilizar sua estrutura.
+Embora não seja considerado o formato ideal para documentos uma vez que não possui opções de formatação; tais como itálico e negrito, o \textit{.txt} é o formato aberto mais comum para arquivos de texto por ser pequeno e na maioria dos casos dispor de vários programas de edição em qualquer plataforma operacional.
+
+Em 01 de maio de 2005, surgiu o \textit{OpenDocument Format}(ODF), um conjunto de formatos para aplicações de escritório com o objetivo de padronizar os formatos abertos para documentos. Seu nome original era \textit{Open Document Format for Office Application}, uma iniciativa da \textit{Organization for the Advancement of Structured Information Standards}(OASIS), em cima de uma base XML criada por desenvolvedores do OpenOffice.org, responsáveis pela aplicação que na época era uma das poucas capazes de utilizar sua estrutura, senão a única.
 
 Atualmente os formatos ODF existem a 7 anos e foram adotados por diversas aplicações, entre elas a Microsoft Office, da Microsoft, mesmo sendo um software originalmente proprietário através de um \textit{pluggin} ele permite a edição e manipulação destes formatos.
 
