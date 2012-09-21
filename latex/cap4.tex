@@ -123,7 +123,7 @@ No momento da conversão o servidor vai receber os dados do cliente, vai decodif
 
 o \textit{FFMPEGHandler} também será o responsável pelos métodos de \textit{getFileMetadataItemList} e \textit{updateFileMetadata}, nos quais serão realizados respectivamente a extração e inserção de \textit{metadados} no arquivo.
 
-Observe também que na segunda extração de \textit{metadados}, linha 17, foi utilizado o \textit{arquivo_atualizado}, resposta da requisição de inserção de \textit{metadados}, linha 15, de forma direta. Isto porque esta requisição do CloudOoo retorna um arquivo como os dados inseridos no mesmo, e que já se encontra codificado para transporte.
+Observe também que na segunda extração de \textit{metadados}, linha 17, foi utilizado o \textit{arquivo-atualizado} , resposta da requisição de inserção de \textit{metadados}, linha 15, de forma direta. Isto porque esta requisição do CloudOoo retorna um arquivo com os dados inseridos no mesmo, e que já se encontra codificado para transporte.
 
 Além destas requisições comuns a todos os \textit{handlers} existem também requisições que foram previamente implantadas apenas para documentos:
 
