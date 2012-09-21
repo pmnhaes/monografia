@@ -7,22 +7,36 @@ Este capítulo apresenta um conceito simplifica sobre cada ferramenta utilizada 
 Python é uma linguagem de programação poderosa e fácil de aprender. Tem estruturas eficientes e de alto nível de dados além de uma abordagem simples, entretanto eficaz para programação orientada a objeto. Sua sintaxe elegante, de tipagem dinâmica, juntamente com a sua natureza interpretada, tornam-na uma linguagem ideal para \textit{scripts} e desenvolvimento rápido de aplicações em muitas áreas, na maioria das plataformas \cite{GUIDO}.
 
 \subsection{Buildout}
+\label{buildout}
 
 \textit{Buildout} é uma ferramenta desenvolvida em python, capaz de criar um ambiente isolado para desenvolvimento de novas aplicações. Ele fornece suporte para criação diversas aplicações, especialmente em Python, mas não somente. Fornece ainda ferramentas para montagem de receitas para aplicações de múltiplas partes. Uma única aplicação pode conter vários programas, processos e definições de configuração \cite{BRANDOM}.
 
-Levando em consideração o ideal do ambiente separado, também chamado de puro, a instalação do \textit{buildout} é extremamente simples a partir de um arquivo de \textit{script} python, que ao ser executado gera um segundo \textit{script} 'bin/buildout' e a partir deste toda aplicação pode ser gerada com base no arquivo de configuração como da Figura \ref{buildout}:
+Levando em consideração o ideal do ambiente separado, também chamado de puro, a instalação do \textit{buildout} é extremamente simples a partir de um arquivo de \textit{script} python, que ao ser executado gera um segundo \textit{script} 'bin/buildout' e a partir deste toda aplicação pode ser gerada com base no arquivo de configuração como do \textit{script} \ref{codigo_buildout}:
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/buildout}}
-    \caption{Simples módulo buildout.cfg. Adaptado de \cite{ZOPE-FOUNDATION-BUILDOUT}}
-    \label{buildout}
-\end{figure}
+{\singlespace
+\begin{lstlisting}[caption=Exemplo de um \textit{script buildout},language=python,label={codigo_buildout}]
+[buildout]
+develop = .
+parts = 
+  xprompt
+  test
+
+[xprompt]
+recipe = zc.recipe.egg:scripts
+eggs = xanalogica.tumbler
+interpreter = xprompt
+
+[test]
+recipe = zc.recipe.testrunner
+eggs = xanalogica.tumbler
+\end{lstlisting}
+}
 
 A descrição superior \textit{[buildout]} é a única realmente obrigatória para identificação de um arquivo de configuração. Na segunda linha definimos que o diretório em que o arquivo se encontra será um local de desenvolvimento da aplicação, nas três seguintes estão definidas suas partes, ou seja, a ordem em que cada parte, seja uma operação ou aplicação acoplada, será executada.
 
 O \textit{recipe} trata-se do componente responsável pela parte a qual é citado. \textit{Egg} trata-se da opção referente as dependências de cada parte e por fim \textit{interpreter} representa ao \textit{buildout} que deseja-se um interpretador python contendo as dependências desta parte e que seja renomeado para \textit{xprompt}.
 
+Assim com poucas especificações o \textit{script} 'bin/buildout' executa todos os passos necessários e gera uma nova aplicação através dessas especificações.
 
 Ainda que incomum, volto a ressaltar que aplicações não desenvolvidas em python podem ter seu ambiente gerado pelo \textit{Buildout}, basta mudar algumas especificações e ter de fato o python instalado como dependência do \textit{buildout} e não da aplicação desejada.
 
@@ -30,23 +44,28 @@ Ainda que incomum, volto a ressaltar que aplicações não desenvolvidas em pyth
 
 O \textit{subprocess} é um modulo python que permite a aplicação expandir processos executados pelo \textit{shell}, ou que transmita-se informações de entrada, saída e erro de aplicações. Este módulo foi criado na intenção de substituir outros módulos e funções obsoletas, além de permitir também maior iterabilidade entre a aplicação e o sistema no qual se encontra.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/subprocess}}
-    \caption{Exemplo de uso do shell pelo subprocess. Adaptado de \cite{GADNER-SUBPROCESS}}
-    \label{subprocess}
-\end{figure}
+{\singlespace
+\begin{lstlisting}[caption=Exemplo de uso do \textit{subprocess},language=python,label={codigo_subrocess}]
+>>> import subprocess
+>>> subprocess.Popen('echo "Hello World!"', shell=True)
+Hello World!
+\end{lstlisting}
+}
 
-Na Figura \ref{subprocess} existe um pequeno exemplo de como o \textit{subprocess} pode ser utilizado, neste exemplo ele é utilizado para acessar o \textit{shell}, como pode ser verificado no final da segunda linha em 'shell=True', e demonstrar um \textit{Hello World} através do comando \textit{echo}.
+No código \ref{codigo_subrocess} existe um pequeno exemplo de como o \textit{subprocess} pode ser utilizado, neste exemplo ele é utilizado para acessar o \textit{shell}, como pode ser verificado no final da segunda linha em 'shell=True', e demonstrar um \textit{Hello World} através do comando \textit{echo}.
 
 Em aplicações que utilizam outros ambientes isolados, ou seja, sem demais instalações, como citado na sessão anterior \ref{buildout}, é preferêncial que a variável \textit{shell} tenha valor \textit{false} na chamada da função a fim de usar as aplicações criadas neste ambiente,porém este é o valor padrão para esta variavél, assim não é preciso declará-lo, como por exemplo no código \ref{codigo_subprocess_convert}.
 
-\begin{figure}[ht]
-    \centering
-    \scalebox{0.7}{\includegraphics{figuras/subprocess_convert}}
-    \caption{Exemplo de uso subprocess do CloudOoo}
-    \label{subprocess_convert}
-\end{figure}
+{\singlespace
+\begin{lstlisting}[caption=Exemplo de uso do \textit{subprocess}com \textit{PIPE},language=python,label={codigo_subrocess_convert}]
+command = ["convert", self.file, output]
+stdout, stderr = Popen(command, 
+                        stdout=PIPE,
+                        stderr=PIPE,
+                        env=self.environment
+                        shell=False).communicate()
+\end{lstlisting}
+}
 
 Embora tenha uma descrição um pouco mais complexa, esta figura esta representando uma chamada do \textit{subprocess} em que utiliza-se o comando \textit{convert}, utiliza-se a opção \textit{PIPE} para que, após executado, o comando retorne as mensagens de saída e erro respectivamente através das variáveis \textit{stdout} e \textit{stderr}. Além disso na chamada também utiliza-se a variável \textit{env} a fim de informar a aplicação caminhos para binários que estão em seu ambiente de desenvolvimento.
 
