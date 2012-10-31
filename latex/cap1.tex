@@ -1,27 +1,29 @@
 \chapter{INTRODUÇÃO}
 \thispagestyle{empty}
 
-Segundo \cite{TESLA}, a Internet é um produto descendente de um experimento militar americano que tentava formar uma rede que não fosse vulnerável ao ataque inimigo, e que desde seu processo de desmilitarização expandiu ao redor mundo, mesmo em continentes afastados e pouco populosos como a Antártica.
+Segundo \cite{TESLA}, a Internet é um produto descendente de um experimento militar americano que tentava formar uma rede que não fosse vulnerável ao ataque inimigo, e que desde seu processo de desmilitarização expandiu ao redor mundo, mesmo em continentes afastados e pouco populosos como a Antártica.  
 
-Somada essa expansão com o processo de evolução constante da Internet, onde atualmente existe um universo crescente de paginas, aplicações e arquivos amplamente disponíveis e interativos, os serviços web provaram ser uma forma rápida e consideravelmente simples de comunicação. Apesar de se provarem mais lentos que determinadas aplicações de nível de \textit{desktop}, e com implementações mais simples. Atualmente, acompanhamos uma migração não só de tarefas antiquadas de ampla exigência manual para serviços disponibilizados em redes e nuvens.
+Ela foi fundamental para criação do \textit{Cloud computing}, em português computação nas nuvens, que consiste em permitir ao usuário acesso a diversas aplicações e ao máximo de funcionalidades que esta nova forma de interação entre maquina e usuário possa disponibilizar, independente da plataforma em que o mesmo se encontre, tornando-se cada vez mais ampla a medida que o avanço tecnológico permite maior acesso a Internet.
 
-O \textit{cloud computing}, em português computação nas nuvens, consiste em permitir ao usuário acesso a diversas aplicações e ao máximo de funcionalidades que esta nova forma de interação entre maquina e usuário disponibiliza,independente da plataforma em que o mesmo se encontre, tornando esta interface cada vez mais ampla a medida que o avanço tecnológico permite maior e mais rápido acesso a Internet.
+Seguindo esta tendência, mesmo antes de sua popularização, o Núcleo de Pesquisa em Sistemas de Informação(NSI) já trabalha anos no desenvolvimento e melhoria do projeto Biblioteca Digital da RENAPI, o qual visa disponibilizar um acervo bibliográfico digital para disseminação de científico tecnológico produzido na rede de Instituições de Educação Profissional Científica e Tecnológica (EPCT).
 
-Seguindo esta tendência, mesmo antes de sua popularização, o Núcleo de Pesquisa em Sistemas de Informação(NSI) já trabalha anos no desenvolvimento e melhoria do projeto Biblioteca Digital da RENAPI, o qual visa disponibilizar um acervo bibliográfico digital de forma a contribuir na disseminação deste material científico tecnológico produzido na rede de Instituições de Educação Profissional Científica e Tecnológica (EPCT).
+Assim o NSI passou a utilizar, entre outras, a ferramenta \textit{OpenOffice.org Daemon}, a qual foi desenvolvida originalmente pela empresa francesa Nexedi SA. Essa ferramenta possuía por objetivo a conversão de documentos.
 
-Assim o NSI passou a utilizar, entre outras, a ferramenta OpenOffice.org Daemon, a qual foi desenvolvida originalmente pela empresa francesa Nexedi SA, igualmente desenvolvedora do projeto ERP5. Essa ferramenta possuía por objetivo a conversão de documentos.
+No entanto a partir do uso prolongado da mesma, foram identificados erros considerados em parte graves para uma aplicação desta extensão. Entre esses é possível citar perda de conexão, \textit{deadlock} no OpenOffice.org utilizado pela aplicação, estouro de memória entre outros.
 
-No entanto a partir do uso prolongado da mesma, foram identificados erros considerados em parte graves para uma aplicação desta extensão. Entre é possível citar perda de conexão, \textit{deadlock} no OpenOffice.org utilizado pela aplicação, entre outros.
+Assim dada a necessidade de corrigir estes erros a fim de obter estabilidade, através da parceria do NSI com a Nexedi,foi realizada a analise desta ferramenta.
 
-Assim dada a necessidade de corrigir a ferramenta a fim de obter estabilidade, através da parceria do NSI com a Nexedi,foi realizada a analise desta que provou inviável corrigi-la em função de novas demandas também percebidas. Definiu-se nova meta, a proposta da criação de uma ferramenta que fosse capaz de manter as conversões anteriores desta, mas que tivesse seus principais erros corrigidos, e que ainda fosse capaz de extrair e manipular informações pertencentes aos documentos em questão.
+Entretanto a análise provou que era inviável corrigir tal ferramenta em função de novas demandas também percebidas.
 
-Em 2010, a ferramenta Web Service OOOD 2.0 foi lançada. Seguindo em parte o nome da antecessora, esta correspondia as expectativas implícitas na ultima analise realizada, no entanto, dado que os objetivos anteriores foram alcançados, e com base no aprendizado envolvido neste desenvolvimento, novas metas foram traçadas.
+Definiu-se assim uma nova meta, a proposta da criação de uma ferramenta que fosse capaz de manter as conversões desta, mas que tivesse seus principais erros corrigidos, e que ainda fosse capaz de extrair e manipular informações pertencentes aos documentos em questão.
+
+Em 2010, a ferramenta Web Service OOOD 2.0 foi apresentada. Seguindo em parte a sigla da antecessora, esta correspondia as expectativas implícitas na ultima analise realizada, no entanto, dado que os objetivos anteriores foram alcançados, e com base no aprendizado envolvido neste desenvolvimento, novas metas foram traçadas.
 
 Além de poder manipular documentos tornou-se desejável também que a ferramenta fosse capaz de manipular arquivos de imagem, vídeo, áudio e PDF.
 
 \section{Objetivo}
 
-Este trabalho tem como principal objetivo apresentar a ferramenta sucessora ao OOOD 2.0, com intuito de demonstrar suas atualizações e ampliações. O CloudOoo provou-se capaz de manipular outros formatos de arquivos, ainda que prematuramente ainda não tenha mesma estabilidade, mas que caminha para isto.
+Este trabalho tem como principal objetivo apresentar a ferramenta sucessora ao OOOD 2.0, com intuito de demonstrar suas atualizações e ampliações. O CloudOoo provou-se capaz de manipular outros formatos de arquivos, ainda que prematuramente não tenha mesma estabilidade, mas que caminha para isto.
 
 \section{Estrutura do trabalho}
 
@@ -29,8 +31,8 @@ Este trabaho se divide em cinco capítulos a partir deste primeiro:
 
 O segundo capítulo deste trabalho cita e explica sobre as principais ferramentas que permitiram ao CloudOoo alcançar os objetivos inicialmente traçados, e que estão diretamente envolvidas a este, demonstrando um pouco sobre cada uma delas.
 
-No terceiro capítulo é apresentada a nova estrutura sobre a qual o CloudOoo foi desenvolvido, e sobre sua forma de uso.
+No terceiro capítulo é apresentada a nova estrutura sobre a qual o CloudOoo vem sendo desenvolvido, e sobre sua necessidade para seu funcionament.
 
-No quarto capítulo é apresentado um breve estudo de caso do desenvolvimento desta, seguindo com um estudo anterior onde esta foi utilizada para demonstrar sobre desenvolvimento de ferramentas usando metodologias ágeis.
+No quarto capítulo é apresentado um breve estudo de caso do desenvolvimento desta ferramenta, avaliando seu desenvolvimento; falando sobre aplicações que o utilizam e demonstrando sobre sua atual estabilidade com base em estudos anteriores.
 
-Por fim no quinto capítulo são apresentadas as conclusões sobre o trabalho com a mesma e de proposta futuras para a melhoria desta.
+Por fim no quinto capítulo são apresentadas as conclusões sobre este trabalho e de proposta futuras para a melhoria desta ferramenta.
