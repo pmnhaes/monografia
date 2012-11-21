@@ -6,20 +6,28 @@ Este capítulo apresenta um conceito simplificado sobre cada ferramenta utilizad
 
 \section{Python}
 
-Python é uma linguagem de programação poderosa e fácil de aprender. Tem estruturas eficientes e de alto nível de dados além de uma abordagem simples, entretanto eficaz para programação orientada a objeto. Sua sintaxe elegante, de tipagem dinâmica, juntamente com a sua natureza interpretável, tornam-na uma linguagem ideal para \textit{scripts} e desenvolvimento rápido de aplicações em muitas áreas, em diversas plataformas \cite{GUIDO}.
+Python é uma linguagem de programação poderosa, fácil de aprender de código aberto e livre. 
 
-Por todas estas vantagens hoje é uma das linguagens mais utilizadas no mundo.
+Ela possui estruturas eficientes e de alto nível de dados além de uma abordagem simples, entretanto eficaz, para programação orientada a objeto. Sua sintaxe elegante de tipagem dinâmica, juntamente com a sua natureza interpretável, tornam-na uma linguagem ideal para \textit{scripts} e desenvolvimento rápido de aplicações em muitas áreas, em diversas plataformas \cite{GUIDO}.
+
+Por todas estas vantagens, hoje, Python é uma das linguagens mais utilizadas no mundo.
 
 
 \subsection{Buildout}
-\label{buildout}
+\label{Buildout}
 
-\textit{Buildout} é uma ferramenta desenvolvida em \textit{python}, capaz de possibilitar o desenvolvimento de novas aplicações em um ambiente isolado. Ele fornece suporte para criação diversas aplicações, especialmente em \textit{python}. A partir de um conjunto de características e variáveis de ambiente previamente definidas em uma 'receita' toda a estrutura da aplicação é gerada independente das dependências de sistema. Uma única aplicação pode conter ainda outras aplicações, processos e definições de configuração em suas próprias receitas \cite{BRANDOM}.
+Buildout é uma ferramenta desenvolvida em Python, capaz de reproduzir o desenvolvimento de aplicações em um ambiente isolado. Ele fornece suporte para criação dessas aplicações, especialmente para as desenvolvidas Python. 
 
-Levando em consideração o ideal do ambiente isolado, também chamado de puro, a instalação do \textit{buildout} é extremamente simples, podendo ser realizada a partir de um \textit{script} \textit{python}, \cite{BOOTSTRAP}, que após executado gerará um \textit{script} 'bin/buildout', a partir do qual a aplicação sera gerada com base nos arquivos de configuração(receitas), como o exemplo \ref{codigo_buildout}:
+A partir de um conjunto de características e variáveis de ambiente previamente definidas em um \textit{recipe}, a estrutura da aplicação é gerada, sendo esta estrutura composta pelas dependências de sistema,por pacotes Python ou mesmo por outras aplicações.
+
+Um único \textit{recipe} de uma aplicação pode conter definições de configuração, processos e ainda outras aplicações, que por sua vez podem ser organizadas com seu próprio \textit{recipe} \cite{BRANDOM}.
+
+Levando em consideração o ideal do ambiente isolado, também chamado de puro, a instalação do Buildout é extremamente simples, podendo ser realizada a partir de um \textit{script} Python simples e de fácil acesso on-line, \cite{BOOTSTRAP}. Após executado, este \textit{script} gerará um segundo \textit{script} conhecido por ``bin/buildout''. 
+
+Através do uso deste segundo \textit{script} é possível a execução das definições de cada \textit{recipe} a fim de obter a aplicação final. No exemplo \ref{xprompt} ocorre a construção da aplicação Xprompt.
 
 {\singlespace
-\begin{lstlisting}[caption=Exemplo de um \textit{script buildout},language=python,label={codigo_buildout}]
+\begin{lstlisting}[caption=Exemplo de um \textit{script} Buildout,language=python,label={xprompt}]
 [buildout]
 develop = .
 parts = 
@@ -34,37 +42,50 @@ interpreter = xprompt
 [test]
 recipe = zc.recipe.testrunner
 eggs = xanalogica.tumbler
+
 \end{lstlisting}
 }
 
-O \textit{script} inicia com a declaração \textit{[buildout]} que é a única parte realmente obrigatória para identificá-lo como uma receita. Por \textit{develop} defini-se que existe um local da aplicação que encontra-se em desenvolvimento, ideal para testes. Por \textit{parts} subentende-se o percurso do \textit{script}, a ordem que deve ser executado independente da ordem que estejam descritos ao longo da receita.
+O \textit{recipe} inicia-se com a declaração ``[Buildout]'', que é a única parte realmente obrigatória para identificá-lo como um \textit{recipe} do Buildout.
 
-Em cada \textit{part} existe um \textit{recipe} que se trata do componente responsável pela instalação da parte a qual se encontra, \textit{recipe} pode ser também a parte em desenvolvimento. \textit{Eggs} se trata da opção referente as dependências necessárias. O \textit{interpreter} é utilizado para gerar um interpretador \textit{python} contendo as dependências relacionadas em \textit{eggs} e que seja renomeado \textit{xprompt}.
+Por \textit{develop} defini-se que existe um local de desenvolvimento da aplicação em questão, esta identificação é ideal para o desenvolvimente e utilização de testes da aplicação.
 
-Assim com poucas especificações quando o \textit{script} 'bin/buildout' for executado seguirá esses passos e gerará uma nova aplicação com essas especificações.
+Por \textit{parts} subentende-se o percurso do \textit{script}, isto é, a ordem de execução que o Buildout deve obdecer para instalação da aplicação independente da ordem que estejam descritas a aplicações ao longo do \textit{recipe}.
 
-Ainda que incomum, vale ressaltar que aplicações não desenvolvidas em \textit{python} podem ter seu ambiente gerado pelo \textit{Buildout}, com base na vasta disponibilidade de \textit{recipes}, ele possibilita a instalação até mesmo de dependências de sistemas apenas dentro do ambiente escolhido.
+Cada \textit{part} possui uma descrição padrão que consiste de dos principios que envolvem cada componente responsável pela instalação da parte a qual se encontra. O \textit{eggs}, por exemplo, se trata da opção referente as dependências necessárias para execução da parte em que se encontra o mesmo.
+
+O \textit{interpreter} é utilizado para gerar um interpretador Python contendo as dependências relacionadas em \textit{eggs}, para utilizá-lo basta citá-lo e nomeá-lo, neste caso o interpretador da aplicação será chamado ``xprompt''.
+
+O tamanha de cada \textit{recipe} vária de acordo com a necessidade da aplicação, neste caso com poucas especificações será possível gerar uma nova instância de uma aplicação Xprompt.
+
+Ainda que incomum, é valido ressaltar que aplicações não necessariamente desenvolvidas em Python podem ter seu ambiente gerado pelo Buildout, com base na vasta disponibilidade de \textit{recipes} disponíveis. Isso geralmente é usado para suporte de dependências de sistema, em sua maioria desenvolvidas em C. O próprio Buildout será responsável por organizar e informar o espaço dessas aplicações, se necessário sobrescrevendo a variável de ambiente PATH.
 
 \subsection{Subprocess}
 
-O \textit{subprocess} é uma biblioteca \textit{python} que permite a criação de processos no sistema. Similar a \textit{Thread}, porém mais eficiente no quesito escalabilidade, pois diferentemente desta, o \textit{subprocess} permite que seus processos utilizem diferentes processadores. Esta biblioteca foi criada na intenção de substituir outros módulos e funções obsoletas, e permitir também maior iterabilidade entre a aplicação e o sistema no qual se encontra.
+O Subprocess é uma biblioteca Python que permite a criação de processos no sistema. Similar a biblioteca Thread, porém mais eficiente no quesito escalabilidade, pois permite que seus processos sejam divididos e utilizem diferentes processadores. 
+
+Esta biblioteca foi criada na intenção de substituir outros módulos e funções obsoletas, e permitir também maior iterabilidade entre a aplicação e o sistema no qual se encontra.
 
 {\singlespace
-\begin{lstlisting}[caption=Exemplo de uso do \textit{subprocess},language=python,label={codigo_subrocess}]
+\begin{lstlisting}[caption=Exemplo de uso do Subprocess,language=python,label={codigo_subrocess}]
 >>> import subprocess
 >>> subprocess.Popen('echo "Hello World!"', shell=True)
 Hello World!
 \end{lstlisting}
 }
 
-No código \ref{codigo_subrocess} existe um pequeno exemplo de como o \textit{subprocess} pode ser utilizado, neste exemplo ele é utilizado para acessar o \textit{shell}, como pode ser verificado no final da segunda linha em 'shell=True', e demonstrar um \textit{Hello World} através do comando \textit{echo}.
+No código \ref{codigo_subrocess} existe um pequeno exemplo de como o Subprocess pode ser utilizado.
 
-Em aplicações que utilizam ambientes isolados, como citado na sessão \ref{buildout}, é preferencial que a variável \textit{shell} tenha valor \textit{false},a fim de usar as aplicações deste ambiente, entretanto este já é seu valor por padrão, assim não é preciso declará-lo, como por exemplo no código \ref{codigo_subprocess_convert}.
+Neste exemplo ele reproduz um acesso ao \textit{shell} do sistema a fim de demonstrar um \textit{Hello World} através do comando \textit{echo}, é possível relatar o uso do \textit{shell} no final da segunda linha em que cita-se ``shell=True''.
 
-Nesses casos também é preferível o uso da variável \textit{env} que representa as \textit{environment} do ambiente, isto é, direciona o processo a utilizar os binários que estão neste ambiente, similar ao passo de redefinir a variável \textit{PATH} do sistema:
+Em aplicações que utilizam ambientes isolados, como citado na sessão \ref{Buildout}, é preferencial que a variável \textit{shell} tenha valor \textit{false},a fim de usar as aplicações deste ambiente, entretanto este já é seu valor por padrão, assim não é preciso declará-lo, como é visto no código \ref{codigo_subprocess_convert}.
+
+Nesses casos também é preferível o uso da variável ``env'' que representa variáveis de \textit{environment}, isto é, variáveis de ambiente. Ao substituir esta variável o Buildout direciona o processo a utilizar os binários que estão no seu ambiente próprio, invés do ambiente original neste caso o próprio sistema.
+
+O processo de sobrescrever a variável ``env'' similar ao passo de redefinir a variável \textit{PATH} do sistema.
 
 {\singlespace
-\begin{lstlisting}[caption=Exemplo de uso do \textit{subprocess}com \textit{PIPE},language=python,label={codigo_subprocess_convert}]
+\begin{lstlisting}[caption=Exemplo de uso do Subprocess com \textit{PIPE} extraído do CloudOoo,language=python,label={codigo_subprocess_convert}]
 command = ["convert", self.file, output]
 stdout, stderr = Popen(command, 
                         stdout=PIPE,
@@ -74,31 +95,36 @@ stdout, stderr = Popen(command,
 }
 
 
-No exemplo, código \ref{codigo_subprocess_convert} também utiliza-se da opção \textit{PIPE} que permite ao comando retornar as mensagens de saída e erro respectivamente através das variáveis \textit{stdout} e \textit{stderr}, para que possam ser utilizadas de informação após seu uso.
+No exemplo, código \ref{codigo_subprocess_convert}, também é utilizada a opção \textit{PIPE} que permite ao comando retornar as mensagens de saída e erro respectivamente através das variáveis \textit{stdout} e \textit{stderr}, para que possam ser utilizadas de informação após seu uso.
 
 
 \subsection{Zope}
 \label{zope}
 
-Zope (Z Object Publishing Environment) é um serviço web livre de código aberto desenvolvido em \textit{python} \cite{ZOPE2}, em outras palavras, um \textit{framework} \textit{python}.
+Zope (Z Object Publishing Environment) é um serviço web livre de código aberto desenvolvido em Python \cite{ZOPE2}, em outras palavras, um \textit{framework} Python.
 
-Zope já foi considerado o responsável pela popularização do \textit{python}, não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o \textit{python} \cite{UDELL}, no entanto por ter se tornado muito extenso e complexo, requirindo um alto nível de taxa de aprendizagem, acabou sendo ofuscado pela ferramenta Djando em questão de popularidade. 
+Zope já foi considerado o principal responsável pela popularização do Python, não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o Python \cite{UDELL}. Entretanto o Zope se tornou muito extenso e complexo, requerendo um alto nível de taxa de aprendizagem e assim sendo ofuscado pela ferramenta Djando em questão de popularidade e até de uso atualmente.
 
-Dado seu nível de complexidade e todas as extensões disponíveis muitos continuaram utilizando o Zope, indiferentes a sua queda de popularidade, assim muitas extensões continuam surgindo, e muitas delas se mantém em processo de atualização continua por seus mantenedores.
+Dado seu nível de complexidade e todas as extensões disponíveis para este, muitos continuam utilizando o Zope, indiferentes a sua queda de popularidade, fazendo com que suas extensões continuem surgindo, sendo mantidas em processo de atualização continua por seus mantenedores.
+
 
 \subsubsection{Zope Interfaces}
 
-Como citado na sessão \ref{zope}, diversas extensões Zope foram criadas com intuito de auxiliar na criação de outras aplicações \textit{python}, de forma a não deixá-las muito extensas ou pesadas, entre elas a \textit{zope.interface} é um exemplo de extensão independente escrita em \textit{python} e mantida pela equipe Zope.
+Como citado na sessão \ref{zope}, diversas extensões Zope foram criadas com intuito de auxiliar na criação de outras aplicações Python, de forma a não deixá-las muito extensas ou pesadas, entre elas a \textit{zope.interface} é um exemplo de extensão independente escrita em Python e mantida pela equipe Zope.
 
-A \textit{zope.interface} foi criada com intuito de permitir a comunicação entre qualquer componentes externos que possuíssem uma \textit{Application Programming Interface} (API). A ideia de criar uma interface para os componentes de uma aplicação é uma forma quase elegante de resolver um antigo problema de tipagens dinâmicas tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
+A \textit{zope.interface} foi criada com intuito de permitir a comunicação entre qualquer componentes externos que possuíssem uma \textit{Application Programming Interface} (API). A idéia de criar uma interface para os componentes de uma aplicação é uma forma quase elegante de resolver um antigo problema de tipagens dinâmicas tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
+
 
 \section{XML}
 
-\textit{Extensible Markup Language} (XML) é uma linguagem em formato de texto simples para representação de informações sobre estruturas, sejam elas de documentos, dados, configurações, entre outros. Foi derivada de um formato antigo chamado SGML, para ser mais flexível ao uso Web \cite{W3C-XML}.
+\textit{Extensible Markup Language} (XML) é uma linguagem em formato de texto simples para representação de informações sobre estruturas, sejam elas de documentos, dados, configurações, entre outros. 
+
+Esta linguagem foi derivada de um formato antigo chamado SGML, e adaptada para ser mais flexível ao uso Web \cite{W3C-XML}.
 
 Atualmente se tornou um dos formatos mais comuns para compartilhamento de informações em aplicações web, por ter uma escrita simples e corresponder a um padrão similar ao HTML, que por muitos anos já vem sendo utilizado.
 
-Além disso este formato dispõe de outras vantagens como: padrão de \textit{markup}, cujo o nome é detalhado de forma redundante; a descrição da estrutura, que de forma geral também permite uma compreensão bem literal, como se fossem textos; todas suas versões são correspondentes, isto é, mesmo que algumas delas procurem por \textit{markups} específicos, qualquer versão mais nova de XML funcionará em uma aplicação que utilizasse uma versão anterior ou mais antiga.
+Além disso esta linguagem dispõe de outras vantagens como: padrão de \textit{markup}, cujo o nome é detalhado de forma redundante; a descrição da estrutura, que de forma geral também permite uma compreensão bem literal, como se fossem textos; todas suas versões são correspondentes, isto é, mesmo que algumas delas procurem por \textit{markups} específicos, qualquer versão mais nova de XML funcionará em uma aplicação que utilizasse uma versão anterior ou mais antiga.
+
 
 \section{Formato Aberto}
 
@@ -132,7 +158,7 @@ O \textit{OpenDocument Format} ainda é uma incógnita à grande maioria dos usu
 
 \subsubsection{Formatos de documentos ODF}
 
-O embora o mesmo padrão seja aplicado de forma geral em documentos ODF, esse padrão possui variação de extensões, no que desrespeita a documentos são elas:
+O embora o mesmo padrão seja aplicado de forma geral em documentos ODF, esse padrão possui variação de extensões, no que desrespeito a documentos são elas:
 
 \begin{itemize}
     \item{Para documentos de texto: .odt, .fodt;}
@@ -163,7 +189,7 @@ Esta estrutura é composta principalmente por:
 \begin{itemize}
     \item{mimetype: arquivo de linha única constituído pelo mimetype do documento;}
     \item{content.xml: arquivo que armazena o conteúdo criado pelo usuário do documento;}
-    \item{meta.xml: arquivo responsável por armazenar os \textit{metadados} do documento, ou seja, dados como autor, data de criação, data de modificação e outros;}
+    \item{meta.xml: arquivo responsável por armazenar os ``metadados'' do documento, ou seja, dados como autor, data de criação, data de modificação e outros;}
     \item{styles.xml: arquivo que contém os estilos do documento, tais como formatações de texto, parágrafos e outros;}
     \item{Pictures: pasta que armazena figuras existentes no documento.}
 \end{itemize}
@@ -177,7 +203,7 @@ No que diz respeito a imagens os formatos abertos tratam sobre patentes dos form
 
 Assim em 1996 surgiu o formato \textit{Portable Network Graphics}(PNG) que tinha como principal objetivo substituir o formato GIF, portador de inúmeros algoritmos patenteados, que no entanto vieram a expirar em 2003.
 
-Desde o princípio sua principal intensão foi sua utilização em qualquer aplicação sem necessidade de conflitos sobre patentes.
+Desde o princípio sua principal intenção foi sua utilização em qualquer aplicação sem necessidade de conflitos sobre patentes.
 
 Além disso este formato permite comprimir imagens sem perda de qualidade e também a retirada do fundo de imagens através do canal alfa; possui suporte de milhões de cores, diferentemente do GIF, cujo suporte era de 256 cores; e ainda permite a criação de animações, cujas extensões podem variar em \textit{.mng} e \textit{.apng}, mas são igualmente livres.
 
@@ -202,34 +228,34 @@ O inicio da serie de blocos deve conter um \textit{IHDR chunk} e o ultimo bloco 
 
 \subsubsection{Exif}
 
-O \textit{Exchangeable Image File Format}(Exif) é um conjunto de \textit{metadados} a respeito da imagem em questão, ou seja, são dados como autor, dia em que a foto foi tirada, câmera utilizada, entre outros listados conforme um padrão.
+O \textit{Exchangeable Image File Format}(Exif) é um conjunto de ``metadados'' a respeito da imagem em questão, ou seja, são dados como autor, dia em que a foto foi tirada, câmera utilizada, entre outros listados conforme um padrão.
 
-Todas essas informações ficam dentro da própria imagem, no entanto é preciso ter uma aplicação especifica para vê-lo, e em casos de informações mais abrangentes, as vezes é necessário possuir também uma aplicação para manipular a imagem e inserir nela \textit{metadados} a respeito da imagem, aplicações estas como \ref{imagemagick}.
+Todas essas informações ficam dentro da própria imagem, no entanto é preciso ter uma aplicação especifica para vê-lo, e em casos de informações mais abrangentes, as vezes é necessário possuir também uma aplicação para manipular a imagem e inserir nela ``metadados'' a respeito da imagem, aplicações estas como \ref{imagemagick}.
 
 \subsection{Formatos de Áudio}
 
-Os formatos abertos de áudio tratam sobre codecs disponíveis sem uma patente aplicada aos mesmos. Nesta categoria conta-se com os formatos \textit{Vorbis}(.ogg) e \textit{Free lossless Áudio Codec}(.flac).
+Os formatos abertos de áudio tratam sobre codecs disponíveis sem uma patente aplicada aos mesmos. Nesta categoria conta-se com os formatos Vorbis(.ogg) e \textit{Free lossless Áudio Codec}(.flac).
 
-O .flac é um formato livre de áudio comprimível e sem perda de qualidade e dados durante a o processo de compreensão. Seu algoritmo permite que o arquivo reduza em até 60\% seu tamanho original, e também permite a manipulação de \textit{metadados}.
+O .flac é um formato livre de áudio comprimível e sem perda de qualidade e dados durante a o processo de compreensão. Seu algoritmo permite que o arquivo reduza em até 60\% seu tamanho original, e também permite a manipulação de ``metadados''.
 
 O .ogg é um novo formato comprimível de áudio. 
-É grosseiramente comparado com outros formatos utilizados para guardar e reproduzir musicas, tais como MP3, VQF, AAC, e outros formatos de áudio digital. Mas é diferente de todos estes formatos porque é livre, aberto e sem patentes \cite{XIPH}.
+É comparado de forma grosseira com outros formatos utilizados para guardar e reproduzir musicas, tais como MP3, VQF, AAC, e outros formatos de áudio digital. Mas é diferente de todos estes formatos porque é livre, aberto e sem patentes \cite{XIPH}.
 
 \subsection{Formatos de Vídeo}
 
-Assim como os arquivos de áudio, a licença dos formatos de vídeo tratam sobre patentes de codecs, e neste caso as extensões mais comuns são conhecidas por \textit{Theora}(.ogv) e \textit{Matroska}(.mkv).
+Assim como os arquivos de áudio, a licença dos formatos de vídeo tratam sobre patentes de codecs, e neste caso as extensões mais comuns são conhecidas por Theora(.ogv) e Matroska(.mkv).
 
-\textit{Theora} é de propósito geral, um codec de vídeo com perda de dados. É baseado no codec de vídeo VP3 produzido pela \textit{On2 Tecnologies} \cite{XIPH-THEORA}.
+Theora é de propósito geral, um codec de vídeo com perda de dados. É baseado no codec de vídeo VP3 produzido pela \textit{On2 Tecnologies} \cite{XIPH-THEORA}.
 
-\textit{Matroska} é o nome de uma iniciativa ousada para a criação de formatos universais de contentores, ou \textit{containers} de áudio e vídeo digitais integrados, grosseiramente chamados de formato de vídeo \cite{WIKIPEDIA-MATROSKA}.
+Matroska é o nome de uma iniciativa ousada para a criação de formatos universais de \textit{containers} de áudio e vídeo digitais integrados, também chamados de formato de vídeo \cite{WIKIPEDIA-MATROSKA}.
 
-Assim o .mkv trata-se de um contentor de padrão aberto para vídeos, que pode conter vários dados de diferentes tipos de codificações.
+Assim o .mkv trata-se de um ``contentor'' de padrão aberto para vídeos, que pode conter vários dados de diferentes tipos de codificações.
 
 \section{LibreOffice}
 
 O LibreOffice é um pacote de software, ou seja, uma suíte para documentos de escritório, de produtividade compatível com a maioria dos pacotes semelhantes, e que esta disponível para várias plataformas. É um software de código aberto, livre para baixar, utilizar e distribuir \cite{LibreOffice}.
 
-Seu inicio foi marcado em 2000, quando a \textit{Sun Microsystems} liberou o código de seu produto \textit{StarOffice}. Neste momento se chamava \textit{OpenOffice.Org}. 
+Seu inicio foi marcado em 2000, quando a Sun Microsystems liberou o código de seu produto StarOffice. Neste momento se chamava OpenOffice.Org. 
 
 Em 2010 a comunidade que desenvolvia o projeto anunciou uma fundação independente, \textit{The Document Foundation}, a fim de cumprir com a independência explicita da carta anunciada ao inicio do projeto.
 
@@ -239,20 +265,20 @@ Assim no inicio de 2011 foi lançado o LibreOffice 3.3, que bem como o OpenOffic
 \subsection{UNO}
 \label{uno}
 
-O projeto \textit{LibreOffice} possuía uma característica muito útil e pouco utilizada que era a capacidade de integrar seu funcionamento com outros aplicativos, isto é, um componente foi disponibilizada a fim de que aplicações em outras linguagens que estivessem fora do projeto pudessem interagir com o mesmo. Esse componente é conhecido por UNO (Universal Network Objects), que por sua vez é composto por um modelo dos componentes do \textit{LibreOffice}.
+O projeto LibreOffice possuía uma característica muito útil e pouco utilizada que era a capacidade de integrar seu funcionamento com outros aplicativos, isto é, um componente foi disponibilizada a fim de que aplicações em outras linguagens que estivessem fora do projeto pudessem interagir com o mesmo. Esse componente é conhecido por UNO (Universal Network Objects), que por sua vez é composto por um modelo dos componentes do LibreOffice.
 
 O UNO oferece interoperabilidade entre diferentes linguagens de programação, diferentes modelos de objetos, diferentes arquiteturas e processos, em uma rede local ou mesmo através da internet. Seus componentes podem ser implementados e acessados através de \textit{bindings} deste \cite{MINETTO-PYUNO}.
 
-Atualmente existem \textit{bindings} para as linguagens C, C++, Java e \textit{python}. Desde a versão 1.1 o \textit{LibreOffice} dispõe do PyUNO em suas instalações por padrão.
+Atualmente existem \textit{bindings} para as linguagens C, C++, Java e Python. Desde a versão 1.1 o LibreOffice dispõe do PyUNO em suas instalações por padrão.
 
 \subsubsection{PyUNO}
 \label{pyuno}
 
-O PyUNO representa uma ``ponte'' entre o \textit{LibreOffice} e aplicações \textit{python}. Através dele é possível a manipulação do componente UNO, seção \ref{uno}, para utilizar praticamente todas funcionalidades disponíveis no \textit{LibreOffice} por \textit{scripts python}.
+O PyUNO representa uma ``ponte'' entre o LibreOffice e aplicações Python. Através dele é possível a manipulação do componente UNO, seção \ref{uno}, para utilizar praticamente todas funcionalidades disponíveis no LibreOffice por \textit{scripts} Python.
 
 No entanto, segundo \cite{PYUNO}, essa ferramenta ainda não atingiu seu uso absoluto podendo conter diversos \textit{bugs}, erros, e assim dependendo em grande parte de colaboração por parte da comunidade que utiliza a mesma.
 
-No código \ref{example_uno} é possível ver um exemplo pratico do uso do PyUNO em um código \textit{python}:
+No código \ref{example_uno} é possível ver um exemplo pratico do uso do PyUNO em um código Python:
 
 {\singlespace
 \begin{lstlisting}[caption=Exemplo de uso do Uno,language=python,label={example_uno}]
@@ -274,7 +300,7 @@ return uno_connection.ServiceManager
 \end{lstlisting}
 }
 
-Neste exemplo extraído diretamente do CloudOoo utiliza-se o contexto do processo ativo do \textit{PyUNO} para retorna um serviço de gerenciamento do \textit{UNO}, isto é, uma conexão é estabelecida entre o principal serviço de gerenciamento do \textit{UNO} e o \textit{PyUNO} utilizado pelo CloudOoo para que este possa por fim controlar as ações deste serviço.
+Neste exemplo extraído diretamente do CloudOoo utiliza-se o contexto do processo ativo do PyUNO para retorna um serviço de gerenciamento do UNO, isto é, uma conexão é estabelecida entre o principal serviço de gerenciamento do UNO e o PyUNO utilizado pelo CloudOoo para que este possa por fim controlar as ações deste serviço.
 
 
 \section{ImageMagick}
@@ -285,16 +311,16 @@ Na realidade o ImageMagick disponibiliza um conjunto de binários, compatíveis 
 
 Para \cite{TESLA} é uma ferramenta, originalmente criada por John Cristy, para visualizar e manipular imagens, que esta amplamente disponível na Internet.
 
-As funcionalidades que podem ser consideradas mais comuns e utilizadas são \textit{convert} e \textit{identify}, essas funcionalidades podem respectivamente: converter imagens para outros formatos ou formatação, como invertido ou de girar em 180 graus; e identificar os \textit{metadados} disponíveis na imagem, como autor, ou data que foi criada ou tirada.
+As funcionalidades que podem ser consideradas mais comuns e utilizadas são \textit{convert} e \textit{identify}, essas funcionalidades podem respectivamente: converter imagens para outros formatos ou formatação, como invertido ou de girar em 180 graus; e identificar os ``metadados'' disponíveis na imagem, como autor, ou data que foi criada ou tirada.
 
 Como as demais ferramentas citadas por este trabalho, é um \textit{software} livre, disponível para baixar e utilizar da forma desejada ao usuário.
 
 
 \section{XPDF}
 
-Xpdf é uma suíte de binários de código aberto para visualização e manipulação básica de \textit{FFMPEG}arquivos \textit{Portable Document Format}(PDF), criada por Glyph e Cog \cite{GLYPH-COG}.
+Xpdf é uma suíte de binários de código aberto para visualização e manipulação básica de FFMPEG arquivos \textit{Portable Document Format}(PDF), criada por Glyph e Cog \cite{GLYPH-COG}.
 
-Além de permitir a visualização de arquivos PDF o \textit{xpdf} é uma ferramenta que permite a extração de textos dentro de documentos PDF e a conversão dos mesmos para o formato \textit{postscript}, formato este especialmente composto de informações e desenvolvido originalmente pela \textit{Adobe System}.
+Além de permitir a visualização de arquivos PDF o XPDF é uma ferramenta que permite a extração de textos dentro de documentos PDF e a conversão dos mesmos para o formato \textit{postscript}, formato este especialmente composto de informações e desenvolvido originalmente pela \textit{Adobe System}.
 
 Assim como a maioria das aplicações para Linux é utilizada através de comandos, neste caso o mais comum \textit{pdftotext} o qual captura o texto disponível no documento PDF e retorna este texto através de um arquivo de texto simples.
 
@@ -303,25 +329,25 @@ Assim como a maioria das aplicações para Linux é utilizada através de comand
 
 O poppler é uma biblioteca para renderizar PDF baseada no xpdf 3.0 \cite{JOHNSON}.
 
-É uma das bibliotecas de código livre mais utilizada pelos sistemas Linux para leitores PDF, seu desenvolvimento é idealizado pela \textit{FreeDesktop.Org}.
+É uma das bibliotecas de código livre mais utilizada pelos sistemas Linux para leitores PDF, seu desenvolvimento é idealizado pela FreeDesktop.Org.
 
 
 \section{PDFTk}
 
-Se um documento PDF é um trabalho eletrônico, então o \textit{pdftk} é utilizado de removedor de grampos, furador, pasta, entre outros utilitários de documentos. o \textit{Pdftk} é uma ferramenta consideravelmente simples para fazer as tarefas diárias com documentos PDF \cite{STEWARD}.
+Se um documento PDF é um trabalho eletrônico, então o PDFTk é utilizado de removedor de grampos, furador, pasta, entre outros utilitários de documentos. o PDFTk é uma ferramenta consideravelmente simples para fazer as tarefas diárias com documentos PDF \cite{STEWARD}.
 
 Esta ferramenta esta sob licença GPL e utiliza bibliotecas que possuem suas próprias licenças de uso.
 
-Na realidade de simples o \textit{pdftk} tem apenas sua forma de uso, pois realiza tarefas complicadas no contexto de documentos PDF. Sua confiabilidade é altamente elogiável dado que seu criador e principal mantenedor, Sid Steward, é também autor do livro “PDF Hacks”, que é considerado uma das referências do ramo.
+Na realidade de simples o PDFTk tem apenas sua forma de uso, pois realiza tarefas complicadas no contexto de documentos PDF. Sua confiabilidade é altamente elogiável dado que seu criador e principal mantenedor, Sid Steward, é também autor do livro “PDF Hacks”, que é considerado uma das referências do ramo.
 
 
 \section{FFMPEG}
 
-Para \cite{FFMPEG-SCALABLE}, a melhoria constante do uso do processamento de multimédia, requerida e obtida pela expansão multifuncional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideais para projetos escaláveis é o \textit{FFMPEG}.
+Para \cite{FFMPEG-SCALABLE}, a melhoria constante do uso do processamento de multimédia, requerida e obtida pela expansão multi funcional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideais para projetos escaláveis é o FFMPEG.
 
-\textit{FFMPEG} é um rápido conversor de vídeo e áudio que também consegue tratar informações de ambos. Ele é capaz de converter faixas arbitrarias de amostras e redimensionar vídeos através de filtros polifásicos de alta qualidade \cite{FFMPEG}.
+FFMPEG é um rápido conversor de vídeo e áudio que também consegue tratar informações de ambos. Ele é capaz de converter faixas arbitrarias de amostras e redimensionar vídeos através de filtros polifásicos de alta qualidade \cite{FFMPEG}.
 
-Mais do que isso, o \textit{FFMPEG} é uma suíte de aplicações via linha de comando capaz de converter, extrair e inserir \textit{metadados} em arquivos de áudio e vídeo de simples entendimento, de fácil uso.
+Mais do que isso, o FFMPEG é uma suíte de aplicações via linha de comando capaz de converter, extrair e inserir ``metadados'' em arquivos de áudio e vídeo de simples entendimento, de fácil uso.
 
 
 \section{SERVIÇOS WEB}
@@ -339,25 +365,25 @@ Este conceito na verdade trata da iniciativa por parte dessas empresas de retira
 
 É um protocolo para chamadas remotas que utiliza HTTP para transporte e XML para codificação. O XML-RPC foi desenhado para ser o mais simples o possível, enquanto permite que uma estrutura de dados complexa seja transmitida, processada e retornada \cite{XMLRPC}.
 
-Foi originalmente criado por Dave Winer na \textit{UserLand Frontier}, e inspirado por outros dois protocolos, um deles também desenvolvido pelo próprio Dave Winer e outro que representava o começo do protocolo \textit{SOAP}. Entretanto seu uso é bem mais simples de se utilizar e entender que o \textit{SOAP}. Suas mensagens correspondem a uma requisição \textit{HTTP-POST}, enquanto composição do corpo da mensagem é escrita em XML, bem como a resposta que a requisição recebe.
+Foi originalmente criado por Dave Winer na \textit{UserLand Frontier}, e inspirado por outros dois protocolos, um deles também desenvolvido pelo próprio Dave Winer e outro que representava o começo do protocolo SOAP. Entretanto seu uso é bem mais simples de se utilizar e entender que o SOAP. Suas mensagens correspondem a uma requisição \textit{HTTP-POST}, enquanto composição do corpo da mensagem é escrita em XML, bem como a resposta que a requisição recebe.
 
 Dada sua simplicidade e eficiência se tornou um protocolo muito popular e utilizado hoje nos dias atuais.
 
 
 \section{WSGI}
 
-O \textit{Web Service Gateway Interface}(WSGI) é uma interface de entrada de dados para serviços web. É também uma especificação para que serviços e aplicações web se comuniquem com outras aplicações web, embora possa ainda ser utilizada para outras funções. É um padrão \textit{python}, escrito sob a \textit{PEP} 333 \cite{WSGI}.
+O \textit{Web Service Gateway Interface}(WSGI) é uma interface de entrada de dados para serviços web. É também uma especificação para que serviços e aplicações web se comuniquem com outras aplicações web, embora possa ainda ser utilizada para outras funções. É um padrão Python, escrito sob a \textit{PEP} 333 \cite{WSGI}.
 
-Esta interface foi escrita com o objetivo de fornecer uma forma relativamente simples e compreensiva de comunicação entre aplicações e servidores, ou pelo menos com a maioria das aplicações web em \textit{python}, e que ainda pudesse suportar componentes \textit{middleware}.
+Esta interface foi escrita com o objetivo de fornecer uma forma relativamente simples e compreensiva de comunicação entre aplicações e servidores, ou pelo menos com a maioria das aplicações web em Python, e que ainda pudesse suportar componentes \textit{middleware}.
 
 
 \subsection{Paster}
 
-\textit{Paster} se trata de um componente para serviços web, composto pelo \textit{Python Paste}, que segue o padrão da interface \textit{python} WSGI.
+Paster se trata de um componente para serviços web, composto pelo Python \textit{Paste}, que segue o padrão da interface Python WSGI.
 
 Possui dois níveis de linha de comando composto inicialmente por \textit{paster}, onde o segundo comando especifica o serviço desejado, como \textit{serve} no caso de estabelecer o servidor, seguindo como parâmetros o restante das informações necessárias para estabelecer o serviço desejado.
 
-É considerado um dos mais simples servidores web para \textit{python}, no entanto pode ser utilizado assincronamente e manter uma escalabilidade considerável até 2000\textit{rps}.
+É considerado um dos mais simples servidores web para Python, no entanto pode ser utilizado assincronamente e manter uma escalabilidade considerável até 2000\textit{rps}.
 
 
 \section{Git}
@@ -366,13 +392,13 @@ Git é um sistema de controle de versões distribuídas livre e de código abert
 
 A historia do Git está muito relacionada a criação do Linux e de Linus Torvalds, seu criador, bem como com toda comunidade de desenvolvimento Linux. Durante anos a comunidade utilizou a ferramenta \textit{BitKeeper} para guardar a modificações do projeto.
 
-Em 2005, após um problema com a proprietária deste, a comunidade decidiu criar sua própria ferramenta a partir da experiencia com a anterior, houve um novo foco em: velocidade, design simples, suporte para desenvolvimento paralelo, distribuição completa e a habilidade necessária para lidar com projetos grandes sem perda de velocidade e dados.
+Em 2005, após um problema com a proprietária deste, a comunidade decidiu criar sua própria ferramenta a partir da experiência com a anterior, houve um novo foco em: velocidade, \textit{design} simples, suporte para desenvolvimento paralelo, distribuição completa e a habilidade necessária para lidar com projetos grandes sem perda de velocidade e dados.
 
 Assim, esse novo sistema de versionamento permite que qualquer repositório seja o centro do versionamento, deixando todo \textit{log} das modificações guardados nele sem que para isso precise de uma conexão a rede ou servidor geral.
 
 
 \subsection{Git e Subversion}
 
-Diferentemente do \textit{git}, o \textit{subversion} é um sistema de controle de versões centralizado, entretanto muito utilizado atualmente, principalmente por projetos livres.
+Diferentemente do Git, o Subversion é um sistema de controle de versões centralizado, entretanto muito utilizado atualmente, principalmente por projetos livres.
 
 Embora seja consideravelmente rápido, é extremamente desaconselhável para projetos grandes e principalmente desenvolvidos paralelamente.

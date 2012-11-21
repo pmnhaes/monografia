@@ -1,15 +1,13 @@
-\chapter{CloudOoo}
+\chapter{CLOUDOOO}
 \thispagestyle{empty}
 
-Em 2006, em função da necessidade da conversão de documentos a empresa francesa Nexedi SA, em parceria com Núcleo de Pesquisa em Sistemas de Informação (NSI), originou a construção da ferramenta \textit{OpenOffice.Org Daemon} (OOOD), com base no uso da ferramenta \textit{LibreOffice}, antiga suíte \textit{OpenOffice.Org}, para conversão de documentos, no entanto com o uso prolongado desta ferramenta em ambientes de produção, foram identificados erros relacionados com a aplicação e com a sua atuação com o LibreOffice. Entre eles estavam erros como perdas de requisições, \textit{deadlock} de processo, e \textit{memory leak}.
+Em função da necessidade da conversão de documentos a empresa francesa Nexedi SA originou a construção da ferramenta OpenOffice.Org Daemon (OOOD), entretanto seu uso prolongado apresentou erros que precisavam de tratamento e ainda com novas demandas crescendo era necessário a realização de mudanças e até de uma nova ferramenta mais estável. Em parceria com o NSI, foi idealizado o desenvolvimento desta nova ferramenta.
 
-Assim foi ressaltada a necessidade de modificações a fim de que a aplicação se tornasse mais estável, além de adicionar novas funcionalidades, como de exportar documentos para outras extensões além de ODF, PDF por exemplo, e também manipular informações destes, conhecidas como \textit{metadados}.
+O resultado da continuação do desenvolvimento foi a ferramenta OOOD 2.0, posteriormente nomeada por CloudOoo, apresentada em 2010. Esta nova versão da ferramenta se provou bem mais estável no uso a longo prazo, embora fosse considerada mais lenta em processos individuais, devido aos tratamentos adicionados para os erros conhecidos, e suas modificações de novas funcionalidades.
 
-O resultado da continuação do desenvolvimento foi a ferramenta \textit{Web Service OOOD 2.0}, posteriormente nomeada por CloudOoo, apresentada em 2010. Esta nova versão da ferramenta se provou bem mais estável no uso a longo prazo, embora fosse considerada mais lenta em processos individuais, devido aos tratamentos adicionados para os erros conhecidos, e suas modificações de novas funcionalidades.
+Ao final do processo de melhoria da ferramenta, novas funcionalidades foram idealizadas para diferentes tipos de arquivos, tais como arquivos de áudio, vídeo, imagem e PDF. A princípio essas funcionalidades seriam as mesmas aplicadas a documentos, conversões e manipulações gerais, vindo a criação de funcionalidades especificas quando a ferramenta fosse considerada estável.
 
-Ao final do processo de melhoria da ferramenta, novas funcionalidades foram idealizadas para diferentes tipos de arquivos, tais como arquivos de áudio, vídeo, imagem e PDF. A princípio essas funcionalidades seriam as mesmas aplicadas a documentos, conversões e manipulações gerais, vindo a criação de funcionalidades especificas quando a ferramente fosse considerada estável.
-
-Assim o CloudOoo apresentado neste capítulo, é um serviço Web livre e de código aberto, sob a licença LGPL, que foi desenvolvido através parceria da Nexedi e do NSI, na linguagem de programação \textit{python} e que utiliza o protocolo XML-RPC para troca de mensagens, que pode ser utilizado inteiramente ou em partes separadas.
+Assim o CloudOoo apresentado neste capítulo, é um serviço Web livre e de código aberto, sob a licença LGPL, que foi desenvolvido através parceria da Nexedi e do NSI, na linguagem de programação Python e que utiliza o protocolo XML-RPC para troca de mensagens, que pode ser utilizado inteiramente ou em partes separadas.
 
 \section{Estrutura}
 
@@ -37,13 +35,13 @@ As próximas subseções apresentam detalhadamente sobre cada interface e as pri
 \subsection{IApplication}
 \label{iapplication}
 
-Por possuir a opção instalação em um ambiente isolado onde tanto o CloudOoo, quanto suas ferramentas podem possuir instalação própria, a partir do uso do \textit{buildout}, foi preciso construir uma interface para controlar as funções dos processos utilizados pela aplicação, ou seja, uma classe que fosse capaz de carregar a configurações das aplicações, controlar a inicialização e finalização de cada processo, e que fosse capaz de verificar se continuavam rodando no sistema operacional, a partir de um identificador e/ou da porta que cada uma utilizasse.
+Por possuir a opção instalação em um ambiente isolado onde tanto o CloudOoo, quanto suas ferramentas podem possuir instalação própria, a partir do uso do Buildout, foi preciso construir uma interface para controlar as funções dos processos utilizados pela aplicação, ou seja, uma classe que fosse capaz de carregar a configurações das aplicações, controlar a inicialização e finalização de cada processo, e que fosse capaz de verificar se continuavam rodando no sistema operacional, a partir de um identificador e/ou da porta que cada uma utilizasse.
 
 
 \subsubsection{Application}
 \label{application}
 
-Esta classe implementa a interface IApplication e tem por objetivo controlar aplicações que estejam dentro do processo do CloudOoo, como o \textit{LibreOffice} que precisa estar iniciado para possibilitar a manipulação dos documentos.
+Esta classe implementa a interface IApplication e tem por objetivo controlar aplicações que estejam dentro do processo do CloudOoo, como o LibreOffice que precisa estar iniciado para possibilitar a manipulação dos documentos.
 
 Além dos métodos citados em \ref{iapplication} esta classe é capaz de apresentar erros ocorridos durante processos e também de retornar o \textit{pid} utilizado pela aplicação. E ainda um método responsável pelo endereço dessa aplicação, ou seja, onde esta estabelecida e em qual porta.
 
@@ -51,13 +49,13 @@ Além dos métodos citados em \ref{iapplication} esta classe é capaz de apresen
 \subsection{IFile}
 \label{ifile}
 
-Esta interface propõe um contrato de tratamento de arquivos, a fim de assegurar uma resposta eficiente e consistente ao cliente. Nela são contidos métodos para que o conteúdo do arquivo seja guardado durante sua instanciação de forma no acontecimento de erros não previstos este co\textit{nteúdo pode ser recuperado, ou mesmo restaurado a forma original.
+Esta interface propõe um contrato de tratamento de arquivos, a fim de assegurar uma resposta eficiente e consistente ao cliente. Nela são contidos métodos para que o conteúdo do arquivo seja guardado durante sua instânciação de forma no acontecimento de erros não previstos este conteúdo pode ser recuperado, ou mesmo restaurado a forma original.
 
 
 \subsubsection{File}
 \label{file}
 
-Com base na implementação da interface IFile, esta classe possui métodos para manter qualquer arquivo recebido do cliente no sistema apenas durante o uso do mesmo. 
+Com base na implementação da interface IFile, esta classe possui métodos para manter qualquer arquivo recebido do cliente no sistema apenas durante o uso do mesmo.
 
 Ao receber um arquivo ela escreve o mesmo no disco, podendo assim recuperar seus dados, e obter informações do mesmo, como seu caminho, por exemplo.
 
@@ -81,45 +79,45 @@ Assim, por exemplo, esta classe possui um método para capitalização do arquiv
 \subsection{IHandler}
 \label{ihandler}
 
-Esta interface foi especificamente criada para estabelecer o contrato entre as aplicações externas utilizadas pelo servidor em função dos pedidos do cliente no que desrespeito a manipulação direta do arquivo, como no caso de conversões por exemplo, ou então extrações e inserções de \textit{metadados}.
+Esta interface foi especificamente criada para estabelecer o contrato entre as aplicações externas utilizadas pelo servidor em função dos pedidos do cliente no que desrespeito a manipulação direta do arquivo, como no caso de conversões por exemplo, ou então extrações e inserções de ``metadados''.
 
-Para as classe que implementam esta interface é recomendado o igual uso de objetos do tipo \textit{File}, seção \ref{file}, para manipulação destes arquivos.
+Para as classe que implementam esta interface é recomendado o igual uso de objetos do tipo File, seção \ref{file}, para manipulação destes arquivos.
 
 
 \subsubsection{OOHandler}
 
-Inicialmente nomeado em função do \textit{OpenOffice.Org}, este \textit{handler} é uma implementação específica de comunicação com o \textit{LibreOffice}, que trata de requisições especificas aos documentos a fim de manipulá-los.
+Inicialmente nomeado em função do OpenOffice.Org, este \textit{handler} é uma implementação específica de comunicação com o LibreOffice, que trata de requisições especificas aos documentos a fim de manipulá-los.
 
 
 \subsubsection{PDFHandler}
 
-Por utilizar de duas ferramentas, o \textit{Poppler} e \textit{PDFtk}, esta classe foi nomeada em função do tipo de arquivo que é responsável, ou seja, arquivos PDF. 
+Por utilizar de duas ferramentas, o Poppler e PDFTk, esta classe foi nomeada em função do tipo de arquivo que é responsável, ou seja, arquivos PDF. 
 
 
 \subsubsection{IMAGEMAGICKHandler}
 
-No que se trata de ferramentas para imagens o ImageMagick é uma das melhores disponível a nível de comando, ela consegue inclusive manipular dados do tipo \textit{Exif}, que são \textit{metadados} referentes a imagens.
+No que se trata de ferramentas para imagens o ImageMagick é uma das melhores disponível a nível de comando, ela consegue inclusive manipular dados do tipo \textit{Exif}, que são ``metadados'' referentes a imagens.
 
-Assim com base na ferramenta que utiliza, esta classe é responsável pela conversão e extração de \textit{metadados} de arquivos de imagem, deseja-se ainda implementar uma funcionalidade de inserção destes, no entanto esta funcionalidade requer uma base de estudos maior.
+Assim com base na ferramenta que utiliza, esta classe é responsável pela conversão e extração de ``metadados'' de arquivos de imagem, deseja-se ainda implementar uma funcionalidade de inserção destes, no entanto esta funcionalidade requer uma base de estudos maior.
 
 
 \subsubsection{FFMPEGHandler}
 
 O FFMPEG  é capaz de manipular arquivos de áudio e vídeo facilitando assim a criação de uma classe que pudesse ser responsável simultaneamente pela manipulação de ambos.
 
-Assim como as demais classes que implementam o IHandler, esta classe é capaz de manipular os \textit{metadados} desses arquivos, bem como convertê-los para determinadas extensões do mesmo tipo.
+Assim como as demais classes que implementam o IHandler, esta classe é capaz de manipular os ``metadados'' desses arquivos, bem como convertê-los para determinadas extensões do mesmo tipo.
 
 
 \subsection{IMonitor}
 
-Esta interface foi desenvolvida principalmente com base nos erros anteriormente obtidos com o uso do \textit{LibreOffice}, no entanto é importante para o sistema como um todo.
+Esta interface foi desenvolvida principalmente com base nos erros anteriormente obtidos com o uso do LibreOffice, no entanto é importante para o sistema como um todo.
 
 Seu uso estabelece controles sobre princípios básicos do sistema, como uso de memória, tempo de requisições, tempo de uso do processo, entre outros.
 
 
 \subsubsection{Monitor}
 
-Basicamente a classe Monitor funciona como uma simples implementação da interface \textit{IMonitor} a fim de estabelecer seus atributos principais, como por exemplo o tempo minimo entre a monitorações do sistema. 
+Basicamente a classe Monitor funciona como uma simples implementação da interface IMonitor a fim de estabelecer seus atributos principais, como por exemplo o tempo mínimo entre a monitorações do sistema. 
 
 As próximas subseções explicam detalhadamente sobre estes controles através da herança desta classe.
 
@@ -127,7 +125,7 @@ As próximas subseções explicam detalhadamente sobre estes controles através 
 \subsubsection{MonitorMemory}
 \label{monitormem}
 
-Nas configurações do CloudOoo existem definições que podem ser modificadas de acordo com o sistema em que vai ser instalado, entre elas existe uma variável responsável pelo uso máximo de memória pelo \textit{LibreOffice}.
+Nas configurações do CloudOoo existem definições que podem ser modificadas de acordo com o sistema em que vai ser instalado, entre elas existe uma variável responsável pelo uso máximo de memória pelo LibreOffice.
 
 A partir dessa definição, dada em \textit{megabytes}, essa classe monitora o uso da memória do sistema, assim caso esta atinja seu limite máximo de uso, a aplicação é reinicia com intuito de limpar da memória mensagens trocadas e que não foram liberadas de uso da mesma, evitando assim o evento chamado \textit{memory leak}, o qual consiste no uso de toda memória do sistema.
 
@@ -137,7 +135,7 @@ A partir dessa definição, dada em \textit{megabytes}, essa classe monitora o u
 
 Também entre as definições citadas na subseção \ref{monitormem}, existe uma variável responsável pelo tempo limite de execução de um determinado processo, caso este tempo seja excedido ocorre o que chamamos de \textit{timeout} e a aplicação é forçada a parar, sendo reiniciada posteriormente.
 
-A utilidade desta limitação é dada pela ideia de que caso este tempo tenha excedido ocorreu algum erro durante o processo, provavelmente em função da resposta da aplicação, assim reiniciá-la pode resolvê-lo.
+A utilidade desta limitação é dada pela idéia de que caso este tempo tenha excedido ocorreu algum erro durante o processo, provavelmente em função da resposta da aplicação, assim reiniciá-la pode resolvê-lo.
 
 
 \subsubsection{MonitorSleepingTime}
@@ -147,14 +145,14 @@ Com intuito de poupar uso do sistema em momentos desnecessários esta classe foi
 
 \subsubsection{MonitorRequest}
 
-A fim de conservar a estabilidade do CloudOoo, esta classe implementa um controle em função do valor máximo de requisições que podem ser respondidas por cada instancia da aplicação, bem como nas subseções \ref{monitormem} e \ref{monitortim} a variável de requisições limite é estabelecida nas configurações.
+A fim de conservar a estabilidade do CloudOoo, esta classe implementa um controle em função do valor máximo de requisições que podem ser respondidas por cada instância da aplicação, bem como nas subseções \ref{monitormem} e \ref{monitortim} a variável de requisições limite é estabelecida nas configurações.
 
-Caso o valor informado seja excedido a instancia é encerrada, em seguido uma nova instancia da mesma aplicação é iniciada.
+Caso o valor informado seja excedido a instância é encerrada, em seguido uma nova instância da mesma aplicação é iniciada.
 
 
 \subsection{IMimemaper}
 
-Em casos de aplicações como o \textit{LibreOffice} que representam uma suíte de menores utilitários é preciso reconhecer a extensão de arquivo específica para cada utilitário. 
+Em casos de aplicações como o LibreOffice que representam uma suíte de menores utilitários é preciso reconhecer a extensão de arquivo específica para cada utilitário. 
 
 De forma geral estas extensões são explicitas no nome do arquivo. Entretanto, caso de que esta não sejam explicitas, é preciso reconhecer o tipo de arquivo de alguma outra forma. 
 
@@ -162,17 +160,17 @@ Neste caso existem o \textit{mimetypes}, que são identificadores presentes no c
 
 Esta interface propõe métodos ara lidar com a identificação desses \textit{mimetypes}.
 
-Seu exemplo de uso é a classe \textit{Mimemapper} a qual será apresentada na próxima subseção.
+Seu exemplo de uso é a classe Mimemapper a qual será apresentada na próxima subseção.
 
 
 \subsubsection{Mimemapper}
 \label{mimemapper}
 
-O CloudOoo possui seus próprio filtros para identificar e renderizar arquivos dentro de sua própria instancia, seção \ref{ihandler}.
+O CloudOoo possui seus próprio filtros para identificar e renderizar arquivos dentro de sua própria instância, seção \ref{ihandler}.
 
 No entanto, dada a necessidade de suas aplicações internas, tornou-se necessário identificá-los de forma a torná-los igualmente reconhecível dentro de cada aplicação específica.
 
-No caso do \textit{LibreOffice} é possível, através do uso do UNO, extrair os \textit{mimetypes} e demais informações como filtros extraídos dos próprios arquivos.
+No caso do LibreOffice é possível, através do uso do UNO, extrair os \textit{mimetypes} e demais informações como filtros extraídos dos próprios arquivos.
 
 
 \subsection{IFilter}
@@ -184,7 +182,7 @@ Com base neste principio de utilização, esta interface propõe um contrato par
 
 \subsubsection{Filter}
 
-Se comparada as outras classes e suas devidas interfaces, a classe \textit{Filter} pode ser considerada a que representa o métodos mais simples.
+Se comparada as outras classes e suas devidas interfaces, a classe Filter pode ser considerada a que representa o métodos mais simples.
 
 Ao ser iniciada ela guarda todos os dados dos filtro em diversos atributos que foram selecionados prevendo seu uso posterior na aplicação.
 
@@ -195,29 +193,29 @@ Quando se possui-se um recurso compartilhado, isto é, um recurso representado p
 
 Esta visão ocorre devido ao fato que determinadas aplicações não conseguem atender a mais de um processo simultaneamente, assim é necessário controlar essa região crítica prevendo travá-la caso um processo já esteja em usando a mesma.
 
-Com este intuito a interface \textit{ILockable] foi implementada.
+Com este intuito a interface ILockable foi implementada.
 
 
 \subsubsection{OpenOffice}
 
-A classe \textit{OpenOffice} foi exclusivamente criada visando controlar a aplicação \textit{LibreOffice}, anteriormente conhecida por \textit{OpenOffice.Org}, a qual foi responsável por maior parte dos erros respondidos do CloudOoo. 
+A classe OpenOffice foi exclusivamente criada visando controlar a aplicação LibreOffice, anteriormente conhecida por OpenOffice.Org, a qual foi responsável por maior parte dos erros respondidos do CloudOoo. 
 
-Esta classe estende o uso da interface \textit{IApplication}, através da classe descrita na seção \ref{application} e ainda implementa a interface anterior, \textit{ILockable}, para que assim seja possível controlar a aplicação, trancá-la e destrancá-la durante seu processo de uso.
+Esta classe estende o uso da interface IApplication, através da classe descrita na seção \ref{application} e ainda implementa a interface anterior, ILockable, para que assim seja possível controlar a aplicação, trancá-la e destrancá-la durante seu processo de uso.
 
 A partir do método \textit{isLocked} é possível verificar se esta aplicação está trancada ou disponível para uso, evitando assim erros, como o \textit{deadlock} por exemplo.
 
 
 \subsection{ITableGranulator, IImageGranulator, ITextGranulator}
 
-Uma das principais funções desenvolvidas para documentos foi a \textit{granularização}, ela trata da extração de partes importantes de documentos que não sejam especificamente textos, como por exemplo tabelas e imagens. 
+Uma das principais funções desenvolvidas para documentos foi a ``granularização'', ela trata da extração de partes importantes de documentos que não sejam especificamente textos, como por exemplo tabelas e imagens. 
 
 Dada a complexidade dessa tarefa foi necessário a implantação das novas interfaces, para que estes processos fossem realizados.
 
-A interface \textit{ITableGranulator} é a interface responsável pelo processo de ``granularização'' específico de tabelas presentes nos documentos. Ela implementa funções respectivas a uma tabela comum, baseada nas linhas e colunas dessas tabelas.
+A interface ITableGranulator é a interface responsável pelo processo de ``granularização'' específico de tabelas presentes nos documentos. Ela implementa funções respectivas a uma tabela comum, baseada nas linhas e colunas dessas tabelas.
 
-Na interface \textit{IImageGranulator} ocorre a ``granularização'' das imagens presentes nestes documentos, que são extraídas em seu formato original, ou em \textit{PNG}.
+Na interface IImageGranulator ocorre a ``granularização'' das imagens presentes nestes documentos, que são extraídas em seu formato original, ou em \textit{PNG}.
 
-Por fim através da interface \textit{ITextGranulator} é possível partir o documento em textos menores dividindo o mesmo a partir de seus parágrafos, ou mesmo em capítulos.
+Por fim através da interface ITextGranulator é possível partir o documento em textos menores dividindo o mesmo a partir de seus parágrafos, ou mesmo em capítulos.
 
 Apesar dessas funcionalidades tratarem diretamente da ``granularização'' de documentos, podemos subdividi-las em dois tipos de documentos: os documentos livres de formato ODF, onde o processo ocorre a partir estudos realizados anteriormente dos mesmos; e documentos PDF, que são igualmente livres, porém tem um tratamento complexo dada sua falta de detalhamento e especificações.
 
@@ -233,16 +231,16 @@ Até o momento essa classe é a única a implementar as exatas três interfaces 
 
 \subsubsection{PDFGranulator}
 
-Esta classe implementa apenas as interfaces \textit{ITableGranulator} e \textit{IImageGranulator}.
+Esta classe implementa apenas as interfaces ITableGranulator e IImageGranulator.
 
-É específica para o tratamento de documentos PDF, que exigem a utilização de bibliotecas e aplicações para ``desmenbrá-lo'' e tratar o resultado desta tarefa.
+É específica para o tratamento de documentos PDF, que exigem a utilização de bibliotecas e aplicações para ``desmembrá-lo'' e tratar o resultado desta tarefa.
 
 Por não possuir tantas especificações quanto documentos ODF, tratá-lo para ``granularização'' tem sido um trabalho mais complicado e com resultados não tão desejáveis, esta classe se encontra em desenvolvimento e aprimoramento.
 
 
 \subsection{IManager}
 
-A IManager trabalha como a interface entre o cliente e servidor a fim de estabelecer um procotolo entre ambos.
+A IManager trabalha como a interface entre o cliente e servidor a fim de estabelecer um protocolo entre ambos.
 
 Ela detém um padrão genérico para troca de informações entre diferentes tipos de arquivos, inclusive vídeos. 
 
@@ -258,7 +256,7 @@ Ela reescreve a chamada dos métodos da aplicação OOOD para utilizarem os novo
 
 \subsubsection{Manager}
 
-A classe Manager implementa as classes \textit{IManager, IERP5Compability, ITableGranulator, ITextGranulator} e \textit{IImageGranulator} com o proposito de interligar suas funcionalidades ao cliente que venha a requiri-las, em outras palavras esta classe é a principal responsável pela conectividade entre cliente, servidor, aplicação e funcionalidades.
+A classe Manager implementa as classes IManager, IERP5Compability, ITableGranulator, ITextGranulator e IImageGranulator com o propósito de interligar suas funcionalidades ao cliente que venha a requeri-las, em outras palavras esta classe é a principal responsável pela conectividade entre cliente, servidor, aplicação e funcionalidades.
 
 Nela são absorvidos os dados importantes para o funcionamento do CloudOoo, como por exemplo a base de \textit{mimetypes}, os \textit{handlers} disponíveis neste, as pastas de trabalho deste, entre outros dados.
 
