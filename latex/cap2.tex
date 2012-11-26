@@ -10,7 +10,7 @@ Python é uma linguagem de programação poderosa, fácil de aprender de código
 
 Ela possui estruturas eficientes e de alto nível de dados além de uma abordagem simples, entretanto eficaz, para programação orientada a objeto. Sua sintaxe elegante de tipagem dinâmica, juntamente com a sua natureza interpretável, tornam-na uma linguagem ideal para \textit{scripts} e desenvolvimento rápido de aplicações em muitas áreas, em diversas plataformas \cite{GUIDO}.
 
-Por todas estas vantagens, hoje, Python é uma das linguagens mais utilizadas no mundo.
+Por todas estas vantagens, hoje, Python é uma das linguagens mais utilizadas no mundo, assim muitas de suas bibliotecas e ferramentas são bem conhecidas. Abaixo serão descritas as ferramentas Buildout e Zope e a biblioteca Subprocess.
 
 
 \subsection{Buildout}
@@ -18,11 +18,13 @@ Por todas estas vantagens, hoje, Python é uma das linguagens mais utilizadas no
 
 Buildout é uma ferramenta desenvolvida em Python, capaz de reproduzir o desenvolvimento de aplicações em um ambiente isolado. Ele fornece suporte para criação dessas aplicações, especialmente para as desenvolvidas Python. 
 
-A partir de um conjunto de características e variáveis de ambiente previamente definidas em um \textit{recipe}, a estrutura da aplicação é gerada, sendo esta estrutura composta pelas dependências de sistema,por pacotes Python ou mesmo por outras aplicações.
+Esta ferramenta se baseia na execução de procedimentos especificado em um arquivo de configuração conhecido por \textit{recipe}
+
+A partir de um conjunto de características e variáveis de ambiente previamente definidas nesse \textit{recipe}, é gerada a estrutura da aplicação, sendo esta composta pelas dependências de sistema,por pacotes Python ou mesmo por outras aplicações.
 
 Um único \textit{recipe} de uma aplicação pode conter definições de configuração, processos e ainda outras aplicações, que por sua vez podem ser organizadas com seu próprio \textit{recipe} \cite{BRANDOM}.
 
-Levando em consideração o ideal do ambiente isolado, também chamado de puro, a instalação do Buildout é extremamente simples, podendo ser realizada a partir de um \textit{script} Python simples e de fácil acesso on-line, \cite{BOOTSTRAP}. Após executado, este \textit{script} gerará um segundo \textit{script} conhecido por ``bin/buildout''. 
+Levando em consideração o ideal do ambiente isolado, também chamado de puro, a instalação do Buildout é extremamente simples podendo ser realizada a partir de um \textit{script} Python simples e de fácil acesso on-line, \cite{BOOTSTRAP}. Após executado, este \textit{script} gerará um segundo \textit{script} conhecido por ``bin/buildout''. 
 
 Através do uso deste segundo \textit{script} é possível a execução das definições de cada \textit{recipe} a fim de obter a aplicação final. No exemplo \ref{xprompt} ocorre a construção da aplicação Xprompt.
 
@@ -48,23 +50,23 @@ eggs = xanalogica.tumbler
 
 O \textit{recipe} inicia-se com a declaração ``[Buildout]'', que é a única parte realmente obrigatória para identificá-lo como um \textit{recipe} do Buildout.
 
-Por \textit{develop} defini-se que existe um local de desenvolvimento da aplicação em questão, esta identificação é ideal para o desenvolvimente e utilização de testes da aplicação.
+Caso a aplicação em questão esteja em desenvolvimento e/ou em fase de testes, utiliza-se a variável \textit{develop}, que deve informar a localização deste desenvolvimento.
 
-Por \textit{parts} subentende-se o percurso do \textit{script}, isto é, a ordem de execução que o Buildout deve obdecer para instalação da aplicação independente da ordem que estejam descritas a aplicações ao longo do \textit{recipe}.
+Por \textit{parts} subentende-se o percurso do \textit{script}, isto é, a ordem de execução que o Buildout deve obedecer para instalação da aplicação independente da ordem que estejam descritas a aplicações ao longo do \textit{recipe}.
 
-Cada \textit{part} possui uma descrição padrão que consiste de dos principios que envolvem cada componente responsável pela instalação da parte a qual se encontra. O \textit{eggs}, por exemplo, se trata da opção referente as dependências necessárias para execução da parte em que se encontra o mesmo.
+Cada \textit{part} possui uma descrição padrão que consiste de variáveis que envolvem cada componente responsável pela sua instalação. O \textit{eggs}, por exemplo, se trata da opção referente as dependências necessárias para execução desta parte.
 
-O \textit{interpreter} é utilizado para gerar um interpretador Python contendo as dependências relacionadas em \textit{eggs}, para utilizá-lo basta citá-lo e nomeá-lo, neste caso o interpretador da aplicação será chamado ``xprompt''.
+O \textit{interpreter} é utilizado para gerar um interpretador Python contendo as dependências relacionadas em \textit{eggs}. Para utilizá-lo basta citá-lo e nomeá-lo. Neste caso o interpretador da aplicação será chamado ``xprompt''.
 
-O tamanha de cada \textit{recipe} vária de acordo com a necessidade da aplicação, neste caso com poucas especificações será possível gerar uma nova instância de uma aplicação Xprompt.
+O tamanho de cada \textit{recipe} vária de acordo com a necessidade da aplicação. Neste caso com poucas especificações será possível gerar uma nova instância de uma aplicação Xprompt.
 
-Ainda que incomum, é valido ressaltar que aplicações não necessariamente desenvolvidas em Python podem ter seu ambiente gerado pelo Buildout, com base na vasta disponibilidade de \textit{recipes} disponíveis. Isso geralmente é usado para suporte de dependências de sistema, em sua maioria desenvolvidas em C. O próprio Buildout será responsável por organizar e informar o espaço dessas aplicações, se necessário sobrescrevendo a variável de ambiente PATH.
+Ainda que incomum, é valido ressaltar que aplicações não necessariamente desenvolvidas em Python podem ter seu ambiente gerado pelo Buildout, com base na vasta disponibilidade de \textit{recipes} disponíveis. Isso geralmente é usado para suporte de dependências de sistema, em sua maioria desenvolvidas em C. O próprio Buildout será responsável por organizar e informar o caminho dessas aplicações, se necessário sobrescrevendo a variável de ambiente PATH.
 
 \subsection{Subprocess}
 
-O Subprocess é uma biblioteca Python que permite a criação de processos no sistema. Similar a biblioteca Thread, porém mais eficiente no quesito escalabilidade, pois permite que seus processos sejam divididos e utilizem diferentes processadores. 
+O Subprocess é uma biblioteca Python que permite a criação de processos no sistema, similar a biblioteca Thread porém mais eficiente no quesito escalabilidade, pois permite que seus processos sejam divididos e utilizem diferentes processadores. 
 
-Esta biblioteca foi criada na intenção de substituir outros módulos e funções obsoletas, e permitir também maior iterabilidade entre a aplicação e o sistema no qual se encontra.
+Esta biblioteca foi criada na intenção de substituir outros módulos e funções obsoletas, e permitir também maior interação entre a aplicação e o sistema no qual se encontra.
 
 {\singlespace
 \begin{lstlisting}[caption=Exemplo de uso do Subprocess,language=python,label={codigo_subrocess}]
@@ -76,13 +78,13 @@ Hello World!
 
 No código \ref{codigo_subrocess} existe um pequeno exemplo de como o Subprocess pode ser utilizado.
 
-Neste exemplo ele reproduz um acesso ao \textit{shell} do sistema a fim de demonstrar um \textit{Hello World} através do comando \textit{echo}, é possível relatar o uso do \textit{shell} no final da segunda linha em que cita-se ``shell=True''.
+Neste exemplo ele reproduz um acesso ao \textit{shell} do sistema a fim de demonstrar um \textit{Hello World} através do comando \textit{echo}, é possível observar o uso do \textit{shell} no final da segunda linha em que cita-se ``shell=True''.
 
 Em aplicações que utilizam ambientes isolados, como citado na sessão \ref{Buildout}, é preferencial que a variável \textit{shell} tenha valor \textit{false},a fim de usar as aplicações deste ambiente, entretanto este já é seu valor por padrão, assim não é preciso declará-lo, como é visto no código \ref{codigo_subprocess_convert}.
 
-Nesses casos também é preferível o uso da variável ``env'' que representa variáveis de \textit{environment}, isto é, variáveis de ambiente. Ao substituir esta variável o Buildout direciona o processo a utilizar os binários que estão no seu ambiente próprio, invés do ambiente original neste caso o próprio sistema.
+Nesses casos também é preferível o uso da variável ``env'' que representa variáveis de \textit{environment}, isto é, variáveis de ambiente. Ao substituir esta variável o Buildout direciona o processo a utilizar os binários que estão no seu ambiente próprio ao invés do ambiente original, que neste caso é o próprio sistema.
 
-O processo de sobrescrever a variável ``env'' similar ao passo de redefinir a variável \textit{PATH} do sistema.
+O processo de sobrescrever a variável ``env'' é similar ao passo de redefinir a variável \textit{PATH} do sistema.
 
 {\singlespace
 \begin{lstlisting}[caption=Exemplo de uso do Subprocess com \textit{PIPE} extraído do CloudOoo,language=python,label={codigo_subprocess_convert}]
@@ -95,24 +97,24 @@ stdout, stderr = Popen(command,
 }
 
 
-No exemplo, código \ref{codigo_subprocess_convert}, também é utilizada a opção \textit{PIPE} que permite ao comando retornar as mensagens de saída e erro respectivamente através das variáveis \textit{stdout} e \textit{stderr}, para que possam ser utilizadas de informação após seu uso.
+No exemplo, código \ref{codigo_subprocess_convert}, também é utilizada a opção \textit{PIPE} que permite ao comando Popen retornar as mensagens de saída e erro respectivamente através das variáveis \textit{stdout} e \textit{stderr}, para que seu conteúdo possa ser após o uso do comando.
 
 
 \subsection{Zope}
 \label{zope}
 
-Zope (Z Object Publishing Environment) é um serviço web livre de código aberto desenvolvido em Python \cite{ZOPE2}, em outras palavras, um \textit{framework} Python.
+Zope (Z Object Publishing Environment) é um serviço web livre, de código aberto, desenvolvido em Python \cite{ZOPE2}, em outras palavras, um \textit{framework} Python.
 
-Zope já foi considerado o principal responsável pela popularização do Python, não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o Python \cite{UDELL}. Entretanto o Zope se tornou muito extenso e complexo, requerendo um alto nível de taxa de aprendizagem e assim sendo ofuscado pela ferramenta Djando em questão de popularidade e até de uso atualmente.
+Zope já foi considerado o principal responsável pela popularização do Python. Não existiu ferramenta em Perl que o levasse as pessoas como o Zope levou o Python \cite{UDELL}. Entretanto o Zope se tornou muito extenso e complexo, requerendo uma alta de taxa de aprendizagem e assim sendo ofuscado pela ferramenta Django em questão de popularidade.tanto
 
-Dado seu nível de complexidade e todas as extensões disponíveis para este, muitos continuam utilizando o Zope, indiferentes a sua queda de popularidade, fazendo com que suas extensões continuem surgindo, sendo mantidas em processo de atualização continua por seus mantenedores.
+Dado seu nível de complexidade e todas as extensões disponíveis, muitos continuam utilizando o Zope, indiferentes a sua queda de popularidade, fazendo com que suas extensões continuem surgindo, sendo mantidas em processo de atualização continua por seus mantenedores.
 
 
 \subsubsection{Zope Interfaces}
 
-Como citado na sessão \ref{zope}, diversas extensões Zope foram criadas com intuito de auxiliar na criação de outras aplicações Python, de forma a não deixá-las muito extensas ou pesadas, entre elas a \textit{zope.interface} é um exemplo de extensão independente escrita em Python e mantida pela equipe Zope.
+Como citado na sessão \ref{zope}, diversas extensões Zope foram desenvolvidas com intuito de auxiliar na criação de outras aplicações Python, de forma a não deixá-las muito extensas ou pesadas. Entre estas a \textit{zope.interface} é um exemplo de extensão independente escrita em Python e mantida pela equipe Zope.
 
-A \textit{zope.interface} foi criada com intuito de permitir a comunicação entre qualquer componentes externos que possuíssem uma \textit{Application Programming Interface} (API). A idéia de criar uma interface para os componentes de uma aplicação é uma forma quase elegante de resolver um antigo problema de tipagens dinâmicas tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
+A \textit{zope.interface} foi criada com intuito de permitir a comunicação entre quaisquer componentes externos que possuíssem uma \textit{Application Programming Interface} (API). A idéia de criar uma interface para os componentes de uma aplicação é uma forma  elegante de resolver um antigo problema de tipagem dinâmica tratando as informações recebidas de forma genérica, a fim de renderizá-las para um tratamento mais específico.
 
 
 \section{XML}
@@ -130,18 +132,18 @@ Além disso esta linguagem dispõe de outras vantagens como: padrão de \textit{
 
 O formato aberto é uma especificação publicada para armazenar dados digitais, mantido geralmente por uma organização de padrões não proprietária, e livre de limitações legais no uso.
 
-Um formato aberto deve ser tanto implementável em software proprietário quanto software livre, usando as licenças típicas de cada um. Em contraste com o formato proprietário que é controlado e defendido por interesses particulares de empresas proprietárias detentoras de seus direitos.
+Um formato aberto deve ser implementável tanto em software proprietário quanto em livre, usando as licenças típicas de cada um. Em oposição a esta idéia o formato proprietário é controlado e defendido por interesses particulares de empresas proprietárias detentoras de seus direitos.
 
-O objetivo principal dos formatos abertos é garantir o acesso a longo prazo aos dados sem incertezas atuais ou futuras no que diz respeito às diretas legais ou à especificação técnica. Um objetivo secundário dos formatos abertos é permitir a competição de mercado, em vez de permitir que o controle de um distribuidor sobre um formato proprietário iniba o uso de um produto de competição.
+O objetivo principal dos formatos abertos é garantir o acesso a longo prazo aos dados sem incertezas atuais ou futuras no que diz respeito às direitos legais ou à especificação técnica. Um objetivo secundário dos formatos abertos é permitir a competição de mercado, em vez de deixar que o controle de um distribuidor sobre um formato proprietário iniba o uso de um produto de competição.
 
 \subsection{Formatos abertos de Documentos}
 \label{documentos}
 
-Embora não seja considerado o formato ideal para documentos uma vez que não possui opções de formatação; tais como itálico e negrito, o \textit{.txt} é o formato aberto mais comum para arquivos de texto por ser pequeno e na maioria dos casos dispor de vários programas de edição em qualquer plataforma operacional.
+O \textit{.txt} é o formato aberto mais comum para arquivos de texto por ser pequeno e na maioria dos casos dispor de vários programas de edição em qualquer plataforma operacional, entretanto não é considerado o formato ideal para documentos, uma vez que não possui opções de formatação; tais como itálico e negrito.
 
-Em 01 de maio de 2005, surgiu o \textit{OpenDocument Format}(ODF), um conjunto de formatos para aplicações de escritório com o objetivo de padronizar os formatos abertos para documentos. Seu nome original era \textit{Open Document Format for Office Application}, uma iniciativa da \textit{Organization for the Advancement of Structured Information Standards}(OASIS), em cima de uma base XML criada por desenvolvedores do OpenOffice.org, responsáveis pela aplicação que na época era uma das poucas capazes de utilizar sua estrutura, senão a única.
+Em 01 de maio de 2005, surgiu o \textit{OpenDocument Format}(ODF), um conjunto de formatos para aplicações de escritório com o objetivo de padronizar os formatos abertos para documentos. Seu nome original era \textit{Open Document Format for Office Application}, uma iniciativa da \textit{Organization for the Advancement of Structured Information Standards}(OASIS), baseado em um XML criado por desenvolvedores do OpenOffice.org. Esta aplicação na época era uma das poucas capazes de utilizar sua estrutura.
 
-Atualmente os formatos ODF existem a 7 anos e foram adotados por diversas aplicações, entre elas a Microsoft Office, da Microsoft, mesmo sendo um software originalmente proprietário através de um \textit{pluggin} ele permite a edição e manipulação destes formatos.
+Atualmente os formatos ODF existem a 7 anos e foram adotados por diversas aplicações. Mesmo em sotwares proprietário entre elas o Microsoft Office, mesmo sendo um software originalmente proprietário através de um \textit{pluggin} ele permite a edição e manipulação destes formatos.
 
 Através da figura \ref{crescimento_odf} é possível acompanhar o crescimento do uso do ODF até 2010, ano em que fez 5 anos.
 
@@ -158,7 +160,7 @@ O \textit{OpenDocument Format} ainda é uma incógnita à grande maioria dos usu
 
 \subsubsection{Formatos de documentos ODF}
 
-O embora o mesmo padrão seja aplicado de forma geral em documentos ODF, esse padrão possui variação de extensões, no que desrespeito a documentos são elas:
+O embora o mesmo padrão seja aplicado de forma geral em documentos ODF, esse padrão possui variações de extensões, no que diz respeito a documentos são elas:
 
 \begin{itemize}
     \item{Para documentos de texto: .odt, .fodt;}
@@ -169,7 +171,7 @@ O embora o mesmo padrão seja aplicado de forma geral em documentos ODF, esse pa
     \item{Para fórmulas: .odf.}
 \end{itemize}
 
-E ainda existe um padrão a parte para modelos, são eles:
+E ainda existe um padrão a parte para modelos(\textit{templates}), são eles:
 
 \begin{itemize}
     \item{Para documentos de texto: .ott;}
