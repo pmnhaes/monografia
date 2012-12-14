@@ -1,7 +1,8 @@
 \chapter{TECNOLOGIAS EMPREGADAS}
 \thispagestyle{empty}
 
-Este capítulo apresenta um conceito simplificado sobre cada ferramenta utilizada para o desenvolvimento desta aplicação, ou que esteja diretamente relacionada a esta.
+Para o desenvolvimento do CloudOoo foi essencial o uso de outras ferramentas as quais pudessem ser incorporadas neste e tornassem possível a criação de novas funcionalidades.
+Este capítulo apresenta um conceito simplificado de cada uma dessas integrações, desde a linguagem principal empregada até as ferramentas utilizadas.
 
 
 \section{Python}
@@ -16,7 +17,7 @@ Por todas estas vantagens, hoje, Python é uma das linguagens mais utilizadas no
 \subsection{Buildout}
 \label{Buildout}
 
-Buildout é uma ferramenta desenvolvida em Python, capaz de reproduzir o desenvolvimento de aplicações em um ambiente isolado. Ele fornece suporte para criação dessas aplicações, especialmente para as desenvolvidas Python. 
+Buildout é uma ferramenta desenvolvida em Python, capaz de reproduzir o desenvolvimento de aplicações em um ambiente dedicado. Ele fornece suporte para criação dessas aplicações, especialmente para as desenvolvidas Python. 
 
 Esta ferramenta se baseia na execução de procedimentos especificado em um arquivo de configuração conhecido por \textit{recipe}
 
@@ -24,7 +25,7 @@ A partir de um conjunto de características e variáveis de ambiente previamente
 
 Um único \textit{recipe} de uma aplicação pode conter definições de configuração, processos e ainda outras aplicações, que por sua vez podem ser organizadas com seu próprio \textit{recipe} \cite{BRANDOM}.
 
-Levando em consideração o ideal do ambiente isolado, também chamado de puro, a instalação do Buildout é extremamente simples podendo ser realizada a partir de um \textit{script} Python simples e de fácil acesso on-line, \cite{BOOTSTRAP}. Após executado, este \textit{script} gerará um segundo \textit{script} conhecido por ``bin/buildout''. 
+Levando em consideração o ideal do ambiente dedicado, também chamado de puro, a instalação do Buildout é extremamente simples podendo ser realizada a partir de um \textit{script} Python simples e de fácil acesso on-line, \cite{BOOTSTRAP}. Após executado, este \textit{script} gerará um segundo \textit{script} conhecido por ``bin/buildout''. 
 
 Através do uso deste segundo \textit{script} é possível a execução das definições de cada \textit{recipe} a fim de obter a aplicação final. No exemplo \ref{xprompt} ocorre a construção da aplicação Xprompt.
 
@@ -80,7 +81,7 @@ No código \ref{codigo_subrocess} existe um pequeno exemplo de como o Subprocess
 
 Neste exemplo ele reproduz um acesso ao \textit{shell} do sistema a fim de demonstrar um \textit{Hello World} através do comando \textit{echo}, é possível observar o uso do \textit{shell} no final da segunda linha em que cita-se ``shell=True''.
 
-Em aplicações que utilizam ambientes isolados, como citado na sessão \ref{Buildout}, é preferencial que a variável \textit{shell} tenha valor \textit{false},a fim de usar as aplicações deste ambiente, entretanto este já é seu valor por padrão, assim não é preciso declará-lo, como é visto no código \ref{codigo_subprocess_convert}.
+Em aplicações que utilizam ambientes dedicados, como citado na sessão \ref{Buildout}, é preferencial que a variável \textit{shell} tenha valor \textit{false},a fim de usar as aplicações deste ambiente, entretanto este já é seu valor por padrão, assim não é preciso declará-lo, como é visto no código \ref{codigo_subprocess_convert}.
 
 Nesses casos também é preferível o uso da variável ``env'' que representa variáveis de \textit{environment}, isto é, variáveis de ambiente. Ao substituir esta variável o Buildout direciona o processo a utilizar os binários que estão no seu ambiente próprio ao invés do ambiente original, que neste caso é o próprio sistema.
 
@@ -145,12 +146,12 @@ Em 01 de maio de 2005, surgiu o \textit{OpenDocument Format}(ODF), um conjunto d
 
 Atualmente os formatos ODF existem a 7 anos e foram adotados por diversas aplicações. Mesmo em sotwares proprietário entre elas o Microsoft Office, mesmo sendo um software originalmente proprietário através de um \textit{pluggin} ele permite a edição e manipulação destes formatos.
 
-Através da figura \ref{crescimento_odf} é possível acompanhar o crescimento do uso do ODF até 2010, ano em que fez 5 anos.
+Através da figura \ref{crescimento_odf}, adaptada de \cite{SILVA}, é possível acompanhar o crescimento do uso do ODF até 2010, ano em que fez 5 anos.
 
 \begin{figure}[ht]
     \centering
     \scalebox{0.7}{\includegraphics{figuras/crescimento_odf}}
-    \caption{Crescimento do ODF nos primeiros cinco anos. Adaptado de \cite{SILVA}}
+    \caption{Crescimento do ODF nos primeiros cinco anos.}
     \label{crescimento_odf}
 \end{figure}
 
@@ -191,7 +192,7 @@ Esta estrutura é composta principalmente por:
 \begin{itemize}
     \item{mimetype: arquivo de linha única constituído pelo mimetype do documento;}
     \item{content.xml: arquivo que armazena o conteúdo criado pelo usuário do documento;}
-    \item{meta.xml: arquivo responsável por armazenar os ``metadados'' do documento, ou seja, dados como autor, data de criação, data de modificação e outros;}
+    \item{meta.xml: arquivo responsável por armazenar os metadados do documento, ou seja, dados como autor, data de criação, data de modificação e outros;}
     \item{styles.xml: arquivo que contém os estilos do documento, tais como formatações de texto, parágrafos e outros;}
     \item{Pictures: pasta que armazena figuras existentes no documento.}
 \end{itemize}
@@ -223,22 +224,22 @@ Cada bloco consiste de:
     \item{length: inteiro correspondente ao numero de \textit{bytes} dos dados da imagem;}
     \item{chunk type: código equivalente ao tipo do bloco;}
     \item{chunk data: dados da imagem;}
-    \item{Cyclic Redundancy Check(CRC): campo que contém o valor total de \textit{bytes} do bloco, o \textit{chunk type} e o \textit{chunk data}, mas sem o valor do \textit{length}.}
+    \item{Cyclic Redundancy Check (CRC): campo que contém o valor total de \textit{bytes} do bloco, o \textit{chunk type} e o \textit{chunk data}, mas sem o valor do \textit{length}.}
 \end{itemize}
 
 O inicio da serie de blocos deve conter um \textit{IHDR chunk} e o ultimo bloco deve conter um \textit{IEND chunk} como \textit{chunk type} sinalizando que representam o inicio e fim da serie respectivamente.
 
 \subsubsection{Exif}
 
-O \textit{Exchangeable Image File Format}(Exif) é um conjunto de ``metadados'' a respeito da imagem em questão, ou seja, são dados como autor, dia em que a foto foi tirada, câmera utilizada, entre outros listados conforme um padrão.
+O \textit{Exchangeable Image File Format}(Exif) é um conjunto de metadados a respeito da imagem em questão, ou seja, são dados como autor, dia em que a foto foi tirada, câmera utilizada, entre outros listados conforme um padrão.
 
-Todas essas informações ficam dentro da própria imagem, no entanto é preciso ter uma aplicação especifica para vê-lo, e em casos de informações mais abrangentes, as vezes é necessário possuir também uma aplicação para manipular a imagem e inserir nela ``metadados'' a respeito da imagem, aplicações estas como \ref{imagemagick}.
+Todas essas informações ficam dentro da própria imagem, no entanto é preciso ter uma aplicação especifica para vê-lo, e em casos de informações mais abrangentes, as vezes é necessário possuir também uma aplicação para manipular a imagem e inserir nela metadados a respeito da imagem, aplicações estas como \ref{imagemagick}.
 
 \subsection{Formatos de Áudio}
 
 Os formatos abertos de áudio tratam sobre codecs disponíveis sem uma patente aplicada aos mesmos. Nesta categoria conta-se com os formatos Vorbis(.ogg) e \textit{Free lossless Áudio Codec}(.flac).
 
-O .flac é um formato livre de áudio comprimível e sem perda de qualidade e dados durante a o processo de compreensão. Seu algoritmo permite que o arquivo reduza em até 60\% seu tamanho original, e também permite a manipulação de ``metadados''.
+O .flac é um formato livre de áudio comprimível e sem perda de qualidade e dados durante a o processo de compreensão. Seu algoritmo permite que o arquivo reduza em até 60\% seu tamanho original, e também permite a manipulação de metadados.
 
 O .ogg é um novo formato comprimível de áudio. 
 É comparado de forma grosseira com outros formatos utilizados para guardar e reproduzir musicas, tais como MP3, VQF, AAC, e outros formatos de áudio digital. Mas é diferente de todos estes formatos porque é livre, aberto e sem patentes \cite{XIPH}.
@@ -278,7 +279,7 @@ Atualmente existem \textit{bindings} para as linguagens C, C++, Java e Python. D
 
 O PyUNO representa uma ``ponte'' entre o LibreOffice e aplicações Python. Através dele é possível a manipulação do componente UNO, seção \ref{uno}, para utilizar praticamente todas funcionalidades disponíveis no LibreOffice por \textit{scripts} Python.
 
-No entanto, segundo \cite{PYUNO}, essa ferramenta ainda não atingiu seu uso absoluto podendo conter diversos \textit{bugs}, erros, e assim dependendo em grande parte de colaboração por parte da comunidade que utiliza a mesma.
+No entanto, segundo \citeonline{PYUNO}, essa ferramenta ainda não atingiu seu uso absoluto podendo conter diversos \textit{bugs}, erros, e assim dependendo em grande parte de colaboração por parte da comunidade que utiliza a mesma.
 
 No código \ref{example_uno} é possível ver um exemplo pratico do uso do PyUNO em um código Python:
 
@@ -311,9 +312,9 @@ Neste exemplo extraído diretamente do CloudOoo utiliza-se o contexto do process
 ImageMagick é uma suíte de aplicações para criar, editar,compor ou converter imagens \textit{bitmap} \cite{IMAGEMAGICK-STUDIO}.
 Na realidade o ImageMagick disponibiliza um conjunto de binários, compatíveis com varias plataformas, que no Linux são dados como comandos de níveis, separados para diversas funcionalidades.
 
-Para \cite{TESLA} é uma ferramenta, originalmente criada por John Cristy, para visualizar e manipular imagens, que esta amplamente disponível na Internet.
+Para \citeonline{TESLA} é uma ferramenta, originalmente criada por John Cristy, para visualizar e manipular imagens, que esta amplamente disponível na Internet.
 
-As funcionalidades que podem ser consideradas mais comuns e utilizadas são \textit{convert} e \textit{identify}, essas funcionalidades podem respectivamente: converter imagens para outros formatos ou formatação, como invertido ou de girar em 180 graus; e identificar os ``metadados'' disponíveis na imagem, como autor, ou data que foi criada ou tirada.
+As funcionalidades que podem ser consideradas mais comuns e utilizadas são \textit{convert} e \textit{identify}, essas funcionalidades podem respectivamente: converter imagens para outros formatos ou formatação, como invertido ou de girar em 180 graus; e identificar os metadados disponíveis na imagem, como autor, ou data que foi criada ou tirada.
 
 Como as demais ferramentas citadas por este trabalho, é um \textit{software} livre, disponível para baixar e utilizar da forma desejada ao usuário.
 
@@ -345,22 +346,22 @@ Na realidade de simples o PDFTk tem apenas sua forma de uso, pois realiza tarefa
 
 \section{FFMPEG}
 
-Para \cite{FFMPEG-SCALABLE}, a melhoria constante do uso do processamento de multimédia, requerida e obtida pela expansão multi funcional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideais para projetos escaláveis é o FFMPEG.
+Para \citeonline{FFMPEG-SCALABLE}, a melhoria constante do uso do processamento de multimídia, requerida e obtida pela expansão multi funcional e acelerada dos equipamentos de hardware, requer também aplicações eficientes e escaláveis a medida que este processo avança. E partindo deste principio uma das ferramentas ideais para projetos escaláveis é o FFMPEG.
 
 FFMPEG é um rápido conversor de vídeo e áudio que também consegue tratar informações de ambos. Ele é capaz de converter faixas arbitrarias de amostras e redimensionar vídeos através de filtros polifásicos de alta qualidade \cite{FFMPEG}.
 
-Mais do que isso, o FFMPEG é uma suíte de aplicações via linha de comando capaz de converter, extrair e inserir ``metadados'' em arquivos de áudio e vídeo de simples entendimento, de fácil uso.
+Mais do que isso, o FFMPEG é uma suíte de aplicações via linha de comando capaz de converter, extrair e inserir metadados em arquivos de áudio e vídeo de simples entendimento, de fácil uso.
 
 
 \section{SERVIÇOS WEB}
 
-Segundo \cite{PIRNAU}, os serviços web representam a metodologia em que aplicações podem se comunicar através de mensagens assíncronas ou chamadas remotas. Assim pode se dizer que serviços web são aplicações acessáveis remotamente.
+Segundo \citeonline{PIRNAU}, os serviços web representam a metodologia em que aplicações podem se comunicar através de mensagens assíncronas ou chamadas remotas. Assim pode se dizer que serviços web são aplicações acessáveis remotamente.
 
-Toda empresa tem por objetivo prover serviços, sejam esses para própria empresa, ou para clientes que por sua podem ser outras empresas. A anos esses serviços têm sido automatizados, inicialmente aplicações \textit{desktop} eram criadas quando a empresa era pequena e possuía poucas maquinas, ou a comunicação entre elas não era tão necessária.
+Toda empresa tem por objetivo prover serviços, sejam esses para própria empresa, ou para clientes que por sua podem ser outras empresas. A anos esses serviços têm sido automatizados, inicialmente aplicações \textit{desktop} eram criadas quando a empresa era pequena e possuía poucos computadores, ou a comunicação entre elas não era tão necessária.
 
 Quando a rede passou a estar presente no dia a dia de forma geral essas aplicações foram evoluindo e buscando a comunicação entre as mesmas.
 
-Este conceito na verdade trata da iniciativa por parte dessas empresas de retirar suas aplicações da maquinas próprias e passá-las para potente servidores que disponibilizarão esta na internet, assim basta ter acesso a internet e é possível utilizar esta aplicação.
+Este conceito na verdade trata da iniciativa por parte dessas empresas de retirar suas aplicações dos computadores e passá-las para potente servidores que disponibilizarão esta na internet, assim basta ter acesso a internet e é possível utilizar esta aplicação.
 
 
 \section{XML-RPC}

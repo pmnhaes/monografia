@@ -32,18 +32,76 @@ Desde de sua estrutura anterior, o CloudOoo foi desenvolvido para trabalhar de f
 As próximas subseções apresentam detalhadamente sobre cada interface e as principais classes a implementá-las.
 
 
+\subsection{ILockable}
+\label{ilock}
+
+Quando se possui-se um recurso compartilhado, isto é, um recurso representado por outra aplicação rodando em paralelo à aplicação principal, admiti-se também existir uma região crítica.
+
+Esta visão ocorre devido ao fato que determinadas aplicações não conseguem atender a mais de um processo simultaneamente, assim é necessário controlar essa região crítica prevendo travá-la caso um processo já esteja em usando a mesma.
+
+Com este intuito a interface ILockable foi implementada.
+
+
 \subsection{IApplication}
 \label{iapplication}
 
-Por possuir a opção instalação em um ambiente isolado onde tanto o CloudOoo, quanto suas ferramentas podem possuir instalação própria, a partir do uso do Buildout, foi preciso construir uma interface para controlar as funções dos processos utilizados pela aplicação, ou seja, uma classe que fosse capaz de carregar a configurações das aplicações, controlar a inicialização e finalização de cada processo, e que fosse capaz de verificar se continuavam rodando no sistema operacional, a partir de um identificador e/ou da porta que cada uma utilizasse.
+Por possuir a opção instalação em um ambiente dedicado onde tanto o CloudOoo, quanto suas ferramentas podem possuir instalação própria, a partir do uso do Buildout, foi preciso construir uma interface para controlar as funções dos processos utilizados pela aplicação, ou seja, uma classe que fosse capaz de carregar a configurações das aplicações, controlar a inicialização e finalização de cada processo, e que fosse capaz de verificar se continuavam rodando no sistema operacional, a partir de um identificador e/ou da porta que cada uma utilizasse.
 
 
 \subsubsection{Application}
 \label{application}
 
-Esta classe implementa a interface IApplication e tem por objetivo controlar aplicações que estejam dentro do processo do CloudOoo, como o LibreOffice que precisa estar iniciado para possibilitar a manipulação dos documentos.
+Esta classe implementa a interface IApplication e tem por objetivo controlar processos externos que estejam sendo utilizados dentro do CloudOoo, como o por exemplo os processos do LibreOffice que precisam estar iniciados para possibilitar a manipulação dos documentos.
 
 Além dos métodos citados em \ref{iapplication} esta classe é capaz de apresentar erros ocorridos durante processos e também de retornar o \textit{pid} utilizado pela aplicação. E ainda um método responsável pelo endereço dessa aplicação, ou seja, onde esta estabelecida e em qual porta.
+
+No código \ref{application} existe uma parte da implementação desta classe, em que é exibido como retornar o \textit{pid} de cada processo. No código é possível notar o uso da biblioteca \textit{implements} do Zope.Interface, utilizada para implementar a interface IApplication.
+
+{\singlespace
+\begin{lstlisting}[caption=Trecho de código referente a função de pid,language=python,label={application}]
+from zope.interface import implements
+from cloudooo.interfaces.application import IApplication
+
+class Application(object):
+
+  implements(IApplication)
+
+  name = "application"
+
+  def pid(self):
+    if not hasattr(self, 'process'):
+      return None
+    return self.process.pid
+\end{lstlisting}
+}
+
+\subsubsection{OpenOffice}
+\label{ooffice}
+
+
+A classe OpenOffice foi exclusivamente criada visando controlar a aplicação LibreOffice, anteriormente conhecida por OpenOffice.Org, a qual foi responsável por maior parte dos erros obtidos no CloudOoo. 
+
+Esta classe estende o uso da interface IApplication, seção \ref{application} e ainda implementa a interface ILockable, \ref{ilock}, para que assim seja possível controlar a aplicação, trancá-la e destrancá-la durante seu processo de uso.
+
+A partir do método \textit{isLocked}, \ref{lockoffice}, é possível verificar se esta aplicação está trancada ou disponível para uso, evitando assim erros, como o \textit{deadlock} por exemplo. Este método realiza uma consulta por meio da função \textit{locked} implementada pela classe Lock, nativa do Python, e própria para trabalhar com Threads.
+
+{\singlespace
+\begin{lstlisting}[caption=Trecho isLocked da classe OpenOffice,language=python,label={lockoffice}]
+from threading import Lock
+
+class OpenOffice(Application):
+
+  implements(ILockable)
+
+  def __init__(self):
+    self._bin_soffice = 'soffice.bin'
+    self._lock = Lock()
+    self._cleanRequest()
+
+  def isLocked(self):
+    return self._lock.locked()
+\end{lstlisting}
+}
 
 
 \subsection{IFile}
@@ -57,55 +115,69 @@ Esta interface propõe um contrato de tratamento de arquivos, a fim de assegurar
 
 Com base na implementação da interface IFile, esta classe possui métodos para manter qualquer arquivo recebido do cliente no sistema apenas durante o uso do mesmo.
 
-Ao receber um arquivo ela escreve o mesmo no disco, podendo assim recuperar seus dados, e obter informações do mesmo, como seu caminho, por exemplo.
+Ao receber um arquivo ela escreve o mesmo no disco, podendo assim recuperar seus dados, e obter informações do mesmo, como seu caminho, por exemplo. No código \ref{file} existe uma representação de como cada File é recriado.
 
-Após o uso deste arquivo, ela é instituída a removê-lo do sistema, bem como qualquer arquivo criado a partir deste, a fim de não esgotar o servidor com arquivos desnecessários.
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe File,language=python,label={file}]
+import tempfile
+from zope.interface import implements
+from cloudooo.interfaces.file import IFile
+
+class File(object):
+
+  implements(IFile)
+
+  def __init__(self, base_folder_url, data, source_format):
+    self.base_folder_url = base_folder_url
+    self.directory_name = self._createDirectory()
+    self.original_data = data
+    self.source_format = source_format
+    self.url = self.load()
+
+  def _createDirectory(self):
+     return tempfile.mkdtemp(dir=self.base_folder_url)
+\end{lstlisting}
+}
+
+Para identificar o diretório do File, é utilizado o \underline{base folder url} o qual se refere a pasta base informada pelo próprio usuário em questão, além do \textit{mkdtemp} que cria um diretório temporário para esta nova instância. 
+
+Após o uso deste arquivo, o File é instituído a remover a instância do sistema, bem como qualquer arquivo criado a partir desta a fim de não esgotar o servidor com arquivos desnecessários.
 
 
 \subsection{IOdfDocument}
 
 Embora muito similar a interface IFile, seção \ref{ifile}, porém seu tratamento é especifico para documentos ODF, dada a complexidade de armazenamento e manipulação destes.
 
-
 \subsubsection{Document}
 
 Por ter sido inicialmente desenvolvido para documentos ODF a estrutura do CloudOoo é relativamente planejada para estes, que por possuírem uma estrutura complexa e compacta exigiram a criação de classes especificas. 
 
-Como no caso desta classe, a qual tem seus métodos desenhados para trabalhar com estruturas XML. Que foi estuda e teve métodos desenvolvidos com base no tempo de estudo a respeito de manipulações de documentos ODF.
+Como no caso do Document, o qual tem seus métodos desenhados com base em estudos anteriores sobre estruturas XML e sobre a manipulação de documentos ODF.
 
-Assim, por exemplo, esta classe possui um método para capitalização do arquivo como um todo, e outro para obtenção apenas da parte referente ao seu conteúdo XML, isto é, o conteúdo de ``content.xml''.
+Assim, no código \ref{document}, esta um trecho do código desta classe que visa a estruturação de um documento ODF com base no uso do ZipFile para ordernar seu XML através da obtenção do conteúdo de ``content.xml''.
 
-
-\subsection{IHandler}
-\label{ihandler}
-
-Esta interface foi especificamente criada para estabelecer o contrato entre as aplicações externas utilizadas pelo servidor em função dos pedidos do cliente no que desrespeito a manipulação direta do arquivo, como no caso de conversões por exemplo, ou então extrações e inserções de ``metadados''.
-
-Para as classe que implementam esta interface é recomendado o igual uso de objetos do tipo File, seção \ref{file}, para manipulação destes arquivos.
-
-
-\subsubsection{OOHandler}
-
-Inicialmente nomeado em função do OpenOffice.Org, este \textit{handler} é uma implementação específica de comunicação com o LibreOffice, que trata de requisições especificas aos documentos a fim de manipulá-los.
+{\singlespace
+\begin{lstlisting}[caption=Trecho de estruturação do content.xml,language=python,label={document}]
+from zope.interface import implements
+from zipfile import ZipFile
+from StringIO import StringIO
+from lxml import etree
+from cloudooo.interfaces.file import IOdfDocument
 
 
-\subsubsection{PDFHandler}
+class OdfDocument(object):
 
-Por utilizar de duas ferramentas, o Poppler e PDFTk, esta classe foi nomeada em função do tipo de arquivo que é responsável, ou seja, arquivos PDF. 
+  implements(IOdfDocument)
 
+  def __init__(self, data, source_format):
+    self._zipfile = ZipFile(StringIO(data))
+    self.source_format = source_format
+    self.parsed_content = etree.fromstring(self.getContentXml())
 
-\subsubsection{IMAGEMAGICKHandler}
-
-No que se trata de ferramentas para imagens o ImageMagick é uma das melhores disponível a nível de comando, ela consegue inclusive manipular dados do tipo \textit{Exif}, que são ``metadados'' referentes a imagens.
-
-Assim com base na ferramenta que utiliza, esta classe é responsável pela conversão e extração de ``metadados'' de arquivos de imagem, deseja-se ainda implementar uma funcionalidade de inserção destes, no entanto esta funcionalidade requer uma base de estudos maior.
-
-
-\subsubsection{FFMPEGHandler}
-
-O FFMPEG  é capaz de manipular arquivos de áudio e vídeo facilitando assim a criação de uma classe que pudesse ser responsável simultaneamente pela manipulação de ambos.
-
-Assim como as demais classes que implementam o IHandler, esta classe é capaz de manipular os ``metadados'' desses arquivos, bem como convertê-los para determinadas extensões do mesmo tipo.
+  def getContentXml(self):
+    return self._zipfile.read('content.xml')
+\end{lstlisting}
+}
 
 
 \subsection{IMonitor}
@@ -116,39 +188,133 @@ Seu uso estabelece controles sobre princípios básicos do sistema, como uso de 
 
 
 \subsubsection{Monitor}
+\label{mon}
 
-Basicamente a classe Monitor funciona como uma simples implementação da interface IMonitor a fim de estabelecer seus atributos principais, como por exemplo o tempo mínimo entre a monitorações do sistema. 
+Basicamente a classe Monitor funciona como uma simples implementação da interface IMonitor a fim de estabelecer seus atributos principais, como por exemplo o tempo mínimo entre a monitorações do sistema(\textit{interval}), que se pode notar no código \ref{monitor}. 
+
+Além deste, outro atributo essencial é a instância de OpenOffice, \ref{ooffice}, através da variável \textit{openoffice}.
+
+{\singlespace
+\begin{lstlisting}[caption=Inicialização da classe Monitor,language=python,label={monitor}]
+zope.interface import implements
+from cloudooo.interfaces.monitor import IMonitor
+
+class Monitor(object):
+
+  implements(IMonitor)
+
+  def __init__(self, openoffice, interval):
+    self.status_flag = False
+    self.openoffice = openoffice
+    self.interval = interval
+
+\end{lstlisting}
+}
 
 As próximas subseções explicam detalhadamente sobre estes controles através da herança desta classe.
-
 
 \subsubsection{MonitorMemory}
 \label{monitormem}
 
 Nas configurações do CloudOoo existem definições que podem ser modificadas de acordo com o sistema em que vai ser instalado, entre elas existe uma variável responsável pelo uso máximo de memória pelo LibreOffice.
 
-A partir dessa definição, dada em \textit{megabytes}, essa classe monitora o uso da memória do sistema, assim caso esta atinja seu limite máximo de uso, a aplicação é reinicia com intuito de limpar da memória mensagens trocadas e que não foram liberadas de uso da mesma, evitando assim o evento chamado \textit{memory leak}, o qual consiste no uso de toda memória do sistema.
+A partir dessa definição, dada em \textit{megabytes}, a MonitorMemory monitora o uso da memória do sistema pela variável \textit{limit}, vista em \ref{mmem}. Assim caso este limite máximo seja atingido, a aplicação é reinicia com intuito de limpar da memória mensagens trocadas e que não foram liberadas de uso da mesma, evitando assim o evento chamado \textit{memory leak}, o qual consiste no uso de toda memória do sistema.
 
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe MonitorMemory,language=python,label={mmem}]
+from monitor import Monitor
+from multiprocessing import Process
+from time import sleep
+
+class MonitorMemory(Monitor, Process):
+
+  def __init__(self, openoffice, interval, limit_memory_usage):
+    Monitor.__init__(self, openoffice, interval)
+    Process.__init__(self)
+    self.limit = limit_memory_usage
+\end{lstlisting}
+}
+
+Além de Monitor, \ref{mon}, estas subclasses também implementam a classe Process, nativa do Python, que tem por função ser o controle dos processos iniciados no sistema pela aplicação;
 
 \subsubsection{MonitorTimeout}
 \label{monitortim}
 
-Também entre as definições citadas na subseção \ref{monitormem}, existe uma variável responsável pelo tempo limite de execução de um determinado processo, caso este tempo seja excedido ocorre o que chamamos de \textit{timeout} e a aplicação é forçada a parar, sendo reiniciada posteriormente.
+Através da definição citada na subseção \ref{monitormem}, o MonitorTimeout realiza uma comparação de tempo ativo da aplicação em função do \textit{interval} para estabelecer o chamado \textit{timeout}, isto é, o tempo limite de execução de um determinado processo.
 
-A utilidade desta limitação é dada pela idéia de que caso este tempo tenha excedido ocorreu algum erro durante o processo, provavelmente em função da resposta da aplicação, assim reiniciá-la pode resolvê-lo.
+Caso este tempo seja excedido a aplicação é forçada a parar, sendo reiniciada posteriormente, \ref{mtim}.A utilidade desta limitação é dada pela idéia de que caso este tempo tenha excedido ocorreu algum erro durante o processo, provavelmente em função da resposta da aplicação, assim reiniciá-la pode resolvê-lo.
+
+{\singlespace
+\begin{lstlisting}[caption=Método run da classe MonitorTimeout,language=python,label={mtim}]
+from monitor import Monitor
+from multiprocessing import Process
+from time import sleep
+
+class MonitorTimeout(Monitor, Process):
+
+  def run(self):
+    sleep(self.interval)
+    if self.openoffice.isLocked():
+      self.openoffice.stop()
+\end{lstlisting}
+}
+
+A utilidade desta limitação é dada pela idéia de que caso este tempo tenha excedido ocorreu algum erro durante o processo, provavelmente em função da resposta da aplicação, neste caso o OpenOffice. Assim reiniciá-la pode resolver tal erro.
 
 
 \subsubsection{MonitorSleepingTime}
 
-Com intuito de poupar uso do sistema em momentos desnecessários esta classe foi criada para observar o momentos de inutilização da aplicação e após determinado tempo parar a mesma. Assim é possível economizar no uso de recursos, e disponibilizá-los para outras aplicações que possam vir a utilizar o mesmo.
+Com intuito de poupar uso do sistema em momentos desnecessários esta classe foi criada para observar o momentos de inutilização da aplicação e para parar a mesma nestes momentos.
 
+A partir de uma definição inicial para o tempo de inutilização, definida na instalação do CloudOoo (\underline{sleeping time}), o MonitorSleepingTime ``trancar'' a aplicação, linha 11, e para sua execução para enfim destrancá-lo caso algum processo queira utilizar a aplicação, \ref{mstime}.
+
+Assim é possível economizar no uso de recursos, e disponibilizá-los para outras aplicações que possam vir a utilizar o mesmo.
+
+{\singlespace
+\begin{lstlisting}[caption=Método run da classe MonitorSleepingTime,language=python,label={mstime}]
+from monitor import Monitor
+from threading import Thread
+from time import sleep, time
+
+class MonitorSleepingTime(Monitor, Thread):
+
+  def run(self):
+    while self.status_flag:
+      current_time = time()
+      if self.openoffice.status() and\
+        (self._touched_at + self.sleeping_time) <= current_time:
+        self.openoffice.acquire()
+        self.openoffice.stop()
+        self.openoffice.release()
+      sleep(self.interval)
+\end{lstlisting}
+}
 
 \subsubsection{MonitorRequest}
 
-A fim de conservar a estabilidade do CloudOoo, esta classe implementa um controle em função do valor máximo de requisições que podem ser respondidas por cada instância da aplicação, bem como nas subseções \ref{monitormem} e \ref{monitortim} a variável de requisições limite é estabelecida nas configurações.
+A fim de conservar a estabilidade do CloudOoo, o MonitorRequest implementa um controle em função do valor máximo de requisições (\underline{request limit}), isto é, um número máximo de requisições do cliente que podem ser respondidas por cada instância da aplicação no servidor.
 
-Caso o valor informado seja excedido a instância é encerrada, em seguido uma nova instância da mesma aplicação é iniciada.
+Caso o valor informado seja excedido a instância é encerrada, em seguido uma nova instância da mesma aplicação é iniciada, como visto em \ref{mreq}.
 
+{\singlespace
+\begin{lstlisting}[caption=Método run da classe MonitorRequest,language=python,label={mreq}]
+from monitor import Monitor
+from threading import Thread
+from time import sleep
+
+
+class MonitorRequest(Monitor, Thread):
+
+  def run(self):
+    while self.status_flag:
+      if self.openoffice.request > self.request_limit:
+        self.openoffice.acquire()
+          self.openoffice.getAddress())
+        self.openoffice.restart()
+        self.openoffice.release()
+      sleep(self.interval)
+\end{lstlisting}
+}
 
 \subsection{IMimemaper}
 
@@ -166,11 +332,32 @@ Seu exemplo de uso é a classe Mimemapper a qual será apresentada na próxima s
 \subsubsection{Mimemapper}
 \label{mimemapper}
 
-O CloudOoo possui seus próprio filtros para identificar e renderizar arquivos dentro de sua própria instância, seção \ref{ihandler}.
+O CloudOoo possui seus próprio filtros para identificar e renderizar arquivos dentro de sua própria instância.
 
 No entanto, dada a necessidade de suas aplicações internas, tornou-se necessário identificá-los de forma a torná-los igualmente reconhecível dentro de cada aplicação específica.
 
-No caso do LibreOffice é possível, através do uso do UNO, extrair os \textit{mimetypes} e demais informações como filtros extraídos dos próprios arquivos.
+No caso do LibreOffice é possível, através do uso do UNO, extrair os \textit{mimetypes} e demais informações como filtros próprios para  esta aplicação. Um vez extraídos é importante definí-los numa inicialização, \ref{mmapper}.
+
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe Mimemapper,language=python,label={mmapper}]
+from zope.interface import implements
+from cloudooo.interfaces.mimemapper import IMimemapper
+
+class MimeMapper(object):
+
+  implements(IMimemapper)
+
+  def __init__(self):
+    self._loaded = False
+    self._filter_by_extension_dict = {}
+    self._extension_list_by_type = {}
+    self._doc_type_list_by_extension = {}
+    self._mimetype_by_filter_type = {}
+    self._document_type_dict = {}
+\end{lstlisting}
+}
+
+Assim uma vez que tenham sido definidos os filtros não é necessário saber a extensão do arquivo por extenso.
 
 
 \subsection{IFilter}
@@ -182,27 +369,151 @@ Com base neste principio de utilização, esta interface propõe um contrato par
 
 \subsubsection{Filter}
 
-Se comparada as outras classes e suas devidas interfaces, a classe Filter pode ser considerada a que representa o métodos mais simples.
+Se comparada as outras classes e suas devidas interfaces, a classe Filter pode ser considerada a que representa um dos métodos mais simples.
 
-Ao ser iniciada ela guarda todos os dados dos filtro em diversos atributos que foram selecionados prevendo seu uso posterior na aplicação.
+Ao ser iniciada ela guarda todos os dados de cada filtro em diversos atributos que foram selecionados prevendo seu uso posterior na aplicação, \ref{filt}.
+
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe File e método getDocumentService,language=python,label={filt}]
+from zope.interface import implements
+from cloudooo.interfaces.filter import IFilter
+
+class Filter(object):
+
+  implements(IFilter)
+
+  def __init__(self, extension, filter, mimetype, document_service, **kwargs):
+    self._extension = extension
+    self._filter = filter
+    self._mimetype = mimetype
+    self._document_service = document_service
+    self._preferred = kwargs.get('preferred')
+    self._sort_index = kwargs.get('sort_index')
+    self._label = kwargs.get("label")
+
+  def getName(self):
+    return self._filter
+
+  def getDocumentService(self):
+    return self._document_service
+\end{lstlisting}
+}
+
+Apesar de simples essa classe possui métodos de extrema importância, como \textit{getDocumentService}, linha 10 \ref{filt}, que no caso do LibreOffice retornar qual aplicação será utilizado para aquela instância.
+
+\subsection{IHandler}
+\label{ihandler}
+
+Esta interface foi especificamente criada para estabelecer o contrato entre as aplicações externas utilizadas pelo servidor em função dos pedidos do cliente no que desrespeito a manipulação direta do arquivo, como no caso de conversões por exemplo, ou então extrações e inserções de metadados, respectivamente os métodos de \textit{convert, getMetadata} e \textit{setMetadata}.
+
+Para as classe que implementam esta interface é recomendado o igual uso de objetos do tipo File, seção \ref{file}, para manipulação dos tipos de arquivos de cada uma dessas.
 
 
-\subsection{ILockable}
+\subsubsection{OOHandler}
 
-Quando se possui-se um recurso compartilhado, isto é, um recurso representado por outra aplicação rodando em paralelo à aplicação principal, admiti-se também existir uma região crítica.
+Inicialmente nomeado em função do OpenOffice.Org, este \textit{handler} é uma implementação específica de comunicação com o LibreOffice, que trata de requisições especificas a documentos a fim de manipulá-los.
 
-Esta visão ocorre devido ao fato que determinadas aplicações não conseguem atender a mais de um processo simultaneamente, assim é necessário controlar essa região crítica prevendo travá-la caso um processo já esteja em usando a mesma.
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe OOHandler,language=python,label={oohand}]
+from cloudooo.interfaces.handler import IHandler
+from cloudooo.handler.ooo.mimemapper import mimemapper
+from cloudooo.file import File
+from cloudooo.handler.ooo.monitor.timeout import MonitorTimeout
+from cloudooo.handler.ooo.monitor import monitor_sleeping_time
+from psutil import pid_exists
 
-Com este intuito a interface ILockable foi implementada.
+
+class Handler(object):
+
+  implements(IHandler)
+
+  def __init__(self, base_folder_url, data, source_format, **kw):
+    self.document = File(base_folder_url, data, source_format)
+    self.zip = kw.get('zip', False)
+    self.uno_path = kw.get("uno_path", None)
+    self.office_binary_path = kw.get("office_binary_path", None)
+    self.timeout = kw.get("timeout", 600)
+    self.refresh = kw.get('refresh', False)
+    self.source_format = source_format
+    if not self.uno_path:
+      self.uno_path = environ.get("uno_path")
+    if not self.office_binary_path:
+      self.office_binary_path = environ.get("office_binary_path")
+\end{lstlisting}
+}
+
+No código \ref{oohand} é possível notar a incorporação de outras classes como File \ref{file}, utilizada para salvar o arquivo recebido em sistema; MimeMapper \ref{mimemapper} para controlar os filtros do LibreOffice; e MonitorTimeout \ref{monitortim} para controlar o tempo gasto pela aplicação para realizar suas funcionalidades.
+
+\subsubsection{PDFHandler}
+
+Por utilizar de duas ferramentas, o Poppler e PDFTk, esta classe foi nomeada em função do tipo de arquivo que é responsável, ou seja, arquivos PDF.
+
+{\singlespace
+\begin{lstlisting}[caption=Trecho de criação da classe PDFHandler,language=python,label={pdfhand}]
+from zope.interface import implements
+from cloudooo.interfaces.handler import IHandler
+from cloudooo.file import File
+
+class Handler(object):
+
+  implements(IHandler)
+
+  def __init__(self, base_folder_url, data, source_format, **kw):
+    self.base_folder_url = base_folder_url
+    self.document = File(base_folder_url, data, source_format)
+    self.environment = kw.get("env", {})
+\end{lstlisting}
+}
+
+No código \ref{pdfhand} é possível notar que a implementação desta classe é bem mais simples que a OOHandler \ref{oohand}, por exemplo.
+Nela são especificados apenas o diretório (\underline{base folder url}), os dados do arquivo (\textit{document}) e o PATH deste sistema (\textit{environment}), que apontará para os binários do Poppler e PDFTk.
 
 
-\subsubsection{OpenOffice}
+\subsubsection{IMAGEMAGICKHandler}
 
-A classe OpenOffice foi exclusivamente criada visando controlar a aplicação LibreOffice, anteriormente conhecida por OpenOffice.Org, a qual foi responsável por maior parte dos erros respondidos do CloudOoo. 
+No que se trata de ferramentas para imagens o ImageMagick é uma das melhores disponível a nível de comando, ela consegue inclusive manipular dados do tipo \textit{Exif}, que são metadados referentes a imagens.
 
-Esta classe estende o uso da interface IApplication, através da classe descrita na seção \ref{application} e ainda implementa a interface anterior, ILockable, para que assim seja possível controlar a aplicação, trancá-la e destrancá-la durante seu processo de uso.
+Assim com base na ferramenta que utiliza, esta classe é responsável pela conversão e extração de metadados de arquivos de imagem, visto em \ref{imhand}. Deseja-se ainda implementar uma funcionalidade de inserção destes, no entanto esta funcionalidade requer uma base de estudos maior.
 
-A partir do método \textit{isLocked} é possível verificar se esta aplicação está trancada ou disponível para uso, evitando assim erros, como o \textit{deadlock} por exemplo.
+{\singlespace
+\begin{lstlisting}[caption=Método getMetadata da classe IMAGEMAGICKHandler,language=python,label={imhand}]
+from zope.interface import implements
+from cloudooo.interfaces.handler import IHandler
+
+class Handler(object):
+
+  def getMetadata(self, base_document=False):
+    """Returns a dictionary with all metadata of document.
+    along with the metadata.
+    """
+    command = ["identify", "-verbose", self.file.getUrl()]
+    stdout, stderr = Popen(command,
+                          stdout=PIPE,
+                          stderr=PIPE,
+                          close_fds=True,
+                          env=self.environment).communicate()
+    metadata_dict = {}
+    for std in stdout.split("\n"):
+      std = std.strip()
+      if re.search("^[a-zA-Z]", std):
+        if std.count(":") > 1:
+          key, value = re.compile(".*\:\ ").split(std)
+        else:
+          key, value = std.split(":")
+        metadata_dict[key] = value.strip()
+    self.file.trash()
+    return metadata_dict
+\end{lstlisting}
+}
+
+
+\subsubsection{FFMPEGHandler}
+
+O FFMPEG  é capaz de manipular arquivos de áudio e vídeo facilitando assim a criação de uma classe que pudesse ser responsável simultaneamente pela manipulação de ambos.
+
+Assim como as demais classes que implementam o IHandler, esta classe é capaz de manipular os metadados desses arquivos, bem como convertê-los para determinadas extensões do mesmo tipo.
+
+Sendo o FFMPEGHandler uma contribuição direta deste trabalho, é possível encontrá-lo detalhadamente em \ref{ffhand}
 
 
 \subsection{ITableGranulator, IImageGranulator, ITextGranulator}
@@ -224,19 +535,52 @@ Apesar dessas funcionalidades tratarem diretamente da ``granularização'' de do
 
 Esta classe foi desenvolvida especialmente para tratar do documentos ODF.
 
-Suas funcionalidades são escritas com base nos \textit{namespaces} encontrados por padrão no XML que compõe esses documentos.
+Suas funcionalidades são escritas com base nos \textit{namespaces} encontrados por padrão no XML que compõe esses documentos, no código \ref{namess} é possível ver alguns exemplos desses.
+
+{\singlespace
+\begin{lstlisting}[caption=URI e ODF Namespaces,language=python,label={namess}]
+TEXT_URI = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'
+TABLE_URI = 'urn:oasis:names:tc:opendocument:xmlns:table:1.0'
+DRAWING_URI = 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0'
+
+TABLE_ATTRIB_NAME = '{%s}name' % TABLE_URI
+TEXT_ATTRIB_STYLENAME = '{%s}style-name' % TEXT_URI
+DRAWING_ATTRIB_STYLENAME = '{%s}style-name' % DRAWING_URI
+DRAWING_ATTRIB_NAME = '{%s}name' % DRAWING_URI
+\end{lstlisting}
+}
 
 Até o momento essa classe é a única a implementar as exatas três interfaces da subseção anterior.
+
+No trecho abaixo, \ref{gettmatrix}, é possível notar como funciona a pesquisa desta classe por uma tabela especifica a fim de retorná-la ao cliente.
+
+{\singlespace
+\begin{lstlisting}[caption=Método de getTableMatrix,language=python,label={gettmatrix}]
+  def getTableMatrix(self, id):
+    row_list = self.document.parsed_content.xpath(
+                        '//table:table[@table:name="%s"]/table:table-row' % id,
+                        namespaces=self.document.parsed_content.nsmap)
+    if len(row_list) == 0:
+      return None
+
+    matrix = []
+    for row in row_list:
+      matrix_row = []
+      for cell in row.iterchildren():
+        matrix_row.append(''.join(cell.itertext()))
+      matrix.append(matrix_row)
+    return matrix
+\end{lstlisting}
+}
 
 
 \subsubsection{PDFGranulator}
 
-Esta classe implementa apenas as interfaces ITableGranulator e IImageGranulator.
+Esta classe implementa apenas as interfaces ITableGranulator e IImageGranulator, \ref{pdfgran}.
 
 É específica para o tratamento de documentos PDF, que exigem a utilização de bibliotecas e aplicações para ``desmembrá-lo'' e tratar o resultado desta tarefa.
 
-Por não possuir tantas especificações quanto documentos ODF, tratá-lo para ``granularização'' tem sido um trabalho mais complicado e com resultados não tão desejáveis, esta classe se encontra em desenvolvimento e aprimoramento.
-
+Por não possuir tantas especificações quanto documentos ODF, tratá-lo para ``granularização'' foi uma das contribuições mais complicadas deste trabalho, e no entanto com resultados não tão desejáveis.
 
 \subsection{IManager}
 
@@ -255,12 +599,554 @@ Ela reescreve a chamada dos métodos da aplicação OOOD para utilizarem os novo
 
 
 \subsubsection{Manager}
+\label{manager}
 
 A classe Manager implementa as classes IManager, IERP5Compability, ITableGranulator, ITextGranulator e IImageGranulator com o propósito de interligar suas funcionalidades ao cliente que venha a requeri-las, em outras palavras esta classe é a principal responsável pela conectividade entre cliente, servidor, aplicação e funcionalidades.
 
 Nela são absorvidos os dados importantes para o funcionamento do CloudOoo, como por exemplo a base de \textit{mimetypes}, os \textit{handlers} disponíveis neste, as pastas de trabalho deste, entre outros dados.
 
-Assim a partir desta classe é possível iniciar o servidor do CloudOoo.
+Assim a partir desta classe é possível iniciar o servidor do CloudOoo, \ref{manag}, nela são especificados a pasta de temporários do CloudOoo (\underline{ path tmp dir}), os \textit{mimetypes} registrados (\underline{mimetype registry}), a lista de \textit{handlers} disponíveis nesta instância do CloudOoo (\underline{handler dict}) e por fim a demais variáveis por um dicionário (\textit{kw}).
+
+{\singlespace
+\begin{lstlisting}[caption=Inicialização do Manager,language=python,label={manag}]
+class Manager(object):
+  implements(IManager, IERP5Compatibility, ITableGranulator, IImageGranulator,
+             ITextGranulator)
+
+  def __init__(self, path_tmp_dir, **kw):
+    self._path_tmp_dir = path_tmp_dir
+    self.kw = kw
+    self.mimetype_registry = self.kw.pop("mimetype_registry")
+    self.handler_dict = self.kw.pop("handler_dict")
+\end{lstlisting}
+}
+
+\section{Novas Funcionalidades}
+
+Nesta seção encontram-se a funcionalidades diretamente desenvolvidas para o CloudOoo por este trabalho.
+
+Abaixo são listadas todas as contribuições deste trabalho:
+
+\begin{itemize}
+    \item{Criação da classe FFMPEGHandler para manipulação de vídeos e áudio;}
+    \item{Criação do módulo cloudoooTestCase para testes de serviço;}
+    \item{Criação do módulo externo CloudOooTestnode;}
+    \item{Criação do módulo externo cloudooo buildout;}
+    \item{Manutenção de classes para fins de migração;}
+    \item{Criação da classe PDFGranulator;}
+    \item{Criação do método granulateFile para granularização de documentos;}
+    \item{Manutenção e extensão de código e testes.}
+\end{itemize}
+
+As próximas subseções apresentam detalhadamente cada contribuição citada:
+
+\subsection{Criação da classe FFMPEGHandler para manipulação de vídeos e áudio}
+
+Esta foi a primeira funcionalidade desenvolvida por este trabalho e que pode ser explicita desde o ``nível zero".
+Assim pretende-se dizer que o CloudOoo não detinha qualquer parte escrita ou planejada para conversão e manipulação de vídeos e áudio antes desta funcionalidade.
+
+\subsubsection{Conversão}
+
+Como o desenvolvimento de todos os \textit{handlers}, a primeira parte deve tratar da conversão direta do tipo de arquivo, que neste caso utiliza a ferramenta FFMPEG:
+
+{\singlespace
+\begin{lstlisting}[caption=Conversão do FFMPEGHandler,language=python,label={ffhand}]
+from zope.interface import implements
+from cloudooo.interfaces.handler import IHandler
+from cloudooo.file import File
+from subprocess import Popen, PIPE
+from tempfile import NamedTemporaryFile
+
+class Handler(object):
+
+  implements(IHandler)
+
+  def __init__(self, base_folder_url, data, source_format, **kw):
+    self.base_folder_url = base_folder_url
+    self.input = File(base_folder_url, data, source_format)
+    self.environment = kw.get("env", {})
+
+  def convert(self, destination_format):
+    output_url = NamedTemporaryFile(suffix=".%s" % destination_format,
+                        dir=self.input.directory_name).name
+    command = ["ffmpeg", "-i", self.input.getUrl(), "-y",output_url]
+    if destination_format == "webm":
+      command.insert(3, "32k")
+      command.insert(3, "-ab")
+    try:
+      stdout, stderr = Popen(command,
+                             stdout=PIPE,
+                             stderr=PIPE,
+                             close_fds=True,
+                             env=self.environment).communicate()
+      self.input.reload(output_url)
+      if len(self.input.getContent()) == 0:
+        logger.error(stderr.split("\n")[-2])
+      return self.input.getContent()
+    finally:
+      self.input.trash()
+\end{lstlisting}
+}
+
+Como por padrão, o FFMPEGHandler utiliza o File para gravar seus dados em sistema, e para obter o arquivo da pós conversão (\underline{output url}).
+Para realizar a conversão propriamente dita utiliza-se a biblioteca Subprocess para que um processo com a ferramenta externa seja realizado, este processo retornará duas mensagens \textit{stdout} e \textit{stderr}, caso o processo seja realizado com sucesso apenas o \textit{stdout} retornará um valor, caso haja um erro o \textit{stderr} poderá explicar qual o erro encontrado.
+
+\subsubsection{Extração de metadados}
+
+Para extraçao de metadados utilizasse um diferente binário, que também pertence a aplicação FFMPEG, neste caso o \textit{ffprobe} retornará apenas os dados do arquivo em questão, como pode-se notar em \ref{getmet}:
+
+{\singlespace
+\begin{lstlisting}[caption=getMetadata do FFMPEGHandler,language=python,label={getmet}]
+  def getMetadata(self, base_document=False):
+    command = ["ffprobe",self.input.getUrl()]
+    stdout, stderr =  Popen(command,
+                           stdout=PIPE,
+                           stderr=PIPE,
+                           close_fds=True,
+                           env=self.environment).communicate()
+    metadata = stderr.split('Metadata:')[1].split('\n')
+    metadata_dict = {}
+    for data in metadata:
+      if len(data) != 0:
+        key, value = data.split(':')
+        metadata_dict[key.strip().capitalize()] = value.strip()
+    self.input.trash()
+    return metadata_dict
+\end{lstlisting}
+}
+
+A lista retornada pelo processo na mensagem do \textit{stderr} é tratada e transformada num dicionário para retornar ao cliente.
+
+
+\subsubsection{Inserção de metadados}
+
+Para a inserção de metadados utilizasse novamente a ferramenta FFMPEG e a biblioteca Subprocess, da mesma forma que para uma conversão, nesta funcionalidade entretanto não há a troca de extensões, apenas a inserção de informações no arquivo recebido no servidor, \ref{setmet}.
+
+{\singlespace
+\begin{lstlisting}[caption=setMetadata do FFMPEGHandler,language=python,label={setmet}]
+  def setMetadata(self, base_document=False):
+    output_url = NamedTemporaryFile(suffix=".%s" % destination_format,
+                        dir=self.input.directory_name).name
+    command = ["ffmpeg", "-i", self.input.getUrl(), "-y",output_url]
+    for metadata in metadata_dict:
+      command.insert(3, "%s=%s"%(metadata, metadata_dict[metadata]))
+      command.insert(3, "-metadata")
+    try:
+      stdout, stderr = Popen(command,
+                             stdout=PIPE,
+                             stderr=PIPE,
+                             close_fds=True,
+                             env=self.environment).communicate()
+      self.input.reload(output_url)
+      return self.input.getContent()
+    finally:
+      self.input.trash()
+\end{lstlisting}
+}
+
+O cliente receberá um arquivo idêntico ao enviado, porém com os dados desejados inseridos.
+
+\subsection{Criação do módulo cloudoooTestCase para testes de serviço}
+
+Com a criação de tantos \textit{handlers} simultaneamente notou-se a necessidade de que fosse estabelecido um padrão para os testes destes a fim de que não houvessem repetições demasiadas neste processo.
+Para 
+
+{\singlespace
+\begin{lstlisting}[caption=setUp do cloudoooTestCase,language=python,label={setup}]
+class TestCase(backportUnittest.TestCase):
+
+  def setUp(self):
+    server_cloudooo_conf = environ.get("server_cloudooo_conf", None)
+    if server_cloudooo_conf is not None:
+      config.read(server_cloudooo_conf)
+    self.hostname = config.get("server:main", "host")
+    self.port = config.get("server:main", "port")
+    self.env_path = config.get("app:main", "env-path")
+    #create temporary path for some files
+    self.working_path = config.get("app:main", "working_path")
+    self.tmp_url = path.join(self.working_path, "tmp")
+    self.proxy = ServerProxy(("http://%s:%s/RPC2" % (self.hostname, self.port)),\
+                allow_none=True)
+    self.afterSetUp()
+\end{lstlisting}
+}
+
+Com a criação do método setUp, por exemplo, toda parte de inicialização do servidor para os testes pode ser ``cortada'', isto por que sempre que fosse realizar um teste seria necessário informar ao mesmo as variáveis de sistema, com este método entretanto, elas passam a ficar guardadas enquanto os testes precisarem das mesmas.
+
+Outra parte bem reaproveitada se trata dos testes de conversões que antes precisariam ser repetidos a cada teste, com o método testConvertFile, visto em \ref{confile}, basta passar um cenário em forma de lista, com a relação das conversões e este método realizará todas e em seguida informará caso falhem.
+
+{\singlespace
+\begin{lstlisting}[caption=testConvertFile do cloudoooTestCase,language=python,label={confile}]
+  def _testConvertFile(self, input_url, source_format, destination_format,
+                      destination_mimetype, zip=False):
+    fault_list = []
+    try:
+      output_data = self.proxy.convertFile(encodestring(open(input_url).read()),
+                                                        source_format,
+                                                        destination_format,
+                                                        zip)
+      file_type = self._getFileType(output_data)
+      if destination_mimetype != None:
+        self.assertEquals(file_type, destination_mimetype)
+      else:
+        if file_type.endswith(": empty"):
+          fault_list.append((source_format, destination_format, file_type))
+    except Fault, err:
+      fault_list.append((source_format, destination_format, err.faultString))
+    if fault_list:
+      template_message = 'input_format: %r\noutput_format: %r\n traceback:\n%s'
+      message = '\n'.join([template_message % fault for fault in fault_list])
+      self.fail('Failed Conversions:\n' + message)
+
+\end{lstlisting}
+}
+
+
+\subsection{Criação do módulo externo CloudOooTestnode}
+
+Outro módulo criado especificamente para testes do CloudOoo foi o CloudOooTestnode.
+
+Entretanto este módulo ultrapassa a simplicidade de apenas realizar os testes do CloudOoo, ele é responsável por criar uma instância do CloudOoo num ambiente dedicado, com base em passos próprios, e nesta nova instância rodar todos os testes deste em sequência e sem intervalos.
+
+Seu processo foi considerado tão longo e complexo que foi considerado por si só um projeto externo e até mesmo uma nova ferramenta utilizada exclusivamente para literalmente testar o CloudOoo, sempre em sua versão mais recente extraída diretamente de seu repositório de desenvolvimento.
+
+Atualmente o uso desta ferramenta encontra-se restrito através do uso do SlapOS \ref{slapos}.
+
+\subsection{Criação do módulo externo cloudooo buildout}
+
+O \underline{cloudooo buildout} é um módulo externo do CloudOoo, estabelecido no GitHub do NSI, com o intuito de promover uma instalação mais simples e direta deste sem que fosse necessário o uso do SlapOS \ref{slapos}.
+
+{\singlespace
+\begin{lstlisting}[caption=Arquivo de configuração do cloudooo buildout,language=python,label={build}]
+[buildout]
+extends =
+  profiles/libreoffice-bin.cfg 
+  profiles/libpng.cfg
+  profiles/lxml-python.cfg
+  profiles/python-2.6.cfg
+  profiles/xorg.cfg
+  profiles/fonts.cfg
+  profiles/poppler.cfg
+  profiles/imagemagick.cfg
+  profiles/pdftk.cfg
+  profiles/xpdf.cfg
+  profiles/ffmpeg.cfg
+  profiles/file.cfg
+  profiles/rdiff-backup.cfg
+  profiles/supervisor.cfg
+
+parts =
+  create-directories
+  libreoffice-bin
+  libXdmcp
+  libXext
+  libXau
+  libSM
+  libXrender
+  liberation-fonts
+  ipaex-fonts
+  libpng12
+  imagemagick
+  file
+  poppler
+  xpdf
+  pdftk
+  ffmpeg
+  bootstrap2.6
+  rdiff-backup
+  supervisor
+  cloudooo-repository
+  template
+  cloudooo-instance
+
+develop =
+  ${:parts-directory}/cloudooo
+
+var-directory = ${:directory}/var
+etc-directory = ${:var-directory}/etc
+log-directory = ${:var-directory}/log
+run-directory = ${:var-directory}/run
+
+
+[create-directories]
+recipe = z3c.recipe.mkdir
+paths = 
+  ${buildout:var-directory}
+  ${buildout:etc-directory}
+  ${buildout:log-directory}
+  ${buildout:run-directory}
+
+[bootstrap2.6]
+python = python2.6
+
+
+[template]
+recipe = z3c.recipe.template
+input = ${buildout:directory}/cloudooo.cfg.in
+output = ${buildout:etc-directory}/cloudooo.cfg
+working_path = ${buildout:run-directory}
+uno_path = ${buildout:parts-directory}/libreoffice-bin/basis-link/program/
+office_binary_path = ${buildout:parts-directory}/libreoffice-bin/program/
+openoffice_port = 23060
+ip = 0.0.0.0
+port = 23000
+PATH = ${buildout:parts-directory}/xpdf/bin:${buildout:parts-directory}/imagemagick/bin:${buildout:parts-directory}/ffmpeg/bin:${buildout:parts-directory}/pdftk/bin:${buildout:parts-directory}/poppler/bin:${buildout:parts-directory}/ghostscript/bin
+LD_LIBRARY_PATH = ${buildout:parts-directory}/file/lib:${buildout:parts-directory}/zlib/lib:${buildout:parts-directory}/freetype/lib:${buildout:parts-directory}/libXext/lib:${buildout:parts-directory}/libXau/lib:${buildout:parts-directory}/libX11/lib:${buildout:parts-directory}/libXdmcp/lib:${buildout:parts-directory}/libxcb/lib
+
+
+[cloudooo-repository]
+recipe = git-recipe
+repository = https://www.github.com/nsi-iff/cloudooo.git
+newest = True
+
+[cloudooo-instance]
+recipe = zc.recipe.egg
+python = python2.6
+interpreter = pycloudooo
+eggs =
+  ${lxml-python:egg}
+  PasteScript
+  python-magic
+  PIL
+  psutil
+  WSGIUtils
+  cloudooo
+entry-points =
+  main=cloudooo.paster_application:application
+  cloudooo_tester=cloudooo.bin.cloudooo_tester:main
+  runCloudoooUnitTest=cloudooo.tests.runHandlerUnitTest:run
+  runCloudoooTestSuite=cloudooo.tests.runTestSuite:run
+scripts = 
+  paster=cloudooo_paster
+  runCloudoooUnitTest
+  runCloudoooTestSuite
+\end{lstlisting}
+}
+
+A partir do uso do Buildout e do arquivo \textit{buildout.cfg} \ref{build}, disponível junto ao download deste módulo, uma instância do CloudOoo é construída no computador desejado a parti de comandos básicos que podem ser vistos na seção \ref{clougit}.
+
+Essa instância contará não só com o CloudOoo, como todas suas dependências instaladas isoladamente do restante do sistema.
+
+\subsection{Manutenção de classes para fins de migração}
+
+Por ser uma aplicação em nuvem, o CloudOoo não precisa de manutenção direta para migrações das ferramentas atuais por ferramentas mais novas, entretanto uma vez que essas modificações podem influenciar em estabilidade e melhorias gerais elas são realizadas a medida do possível.
+
+Neste trabalho foram realizadas pequenas modificações que poderiam influenciar diretamente no uso do python2.6 em função do python3.0, exemplo no código \ref{exempy} e algumas modificações em função das constantes mudanças do LibreOffice.
+
+No código \ref{exemlib} estão alguns exemplos dessas modificações, nele as linhas que começam com --- representam a parte retirada, e as linhas iniciadas por +++ representam a parte nova reescrita.
+
+{\singlespace
+\begin{lstlisting}[caption=Exemplo de modificação para Python 3,language=python,label={exempy}]
+---    output_url = mktemp(suffix=".%s" % self.input.source_format,
+---                        dir=self.input.directory_name)
+
++++    output_url = NamedTemporaryFile(suffix=".%s" % self.input.source_format,
++++                        dir=self.input.directory_name).name
+\end{lstlisting}
+}
+
+
+{\singlespace
+\begin{lstlisting}[caption=Exemplo de modificação pra LibreOffice,language=python,label={exemlib}]
+    self.command = [join(self.office_binary_path, self._bin_soffice),
++++         '--headless',
++++         '--invisible',
+---         '--headless',
+---         '-invisible',
+         '-nocrashreport',
++++         '--nologo',
++++         '--nodefault',
++++         '--norestore',
++++         '--nofirststartwizard',
+---         '-nologo',
+---         '-nodefault',
+---         '-norestore',
+---         '-nofirststartwizard',
++++         '--accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
+---         '-accept=socket,host=%s,port=%d;urp;' % (self.hostname, self.port),
+         '-env:UserInstallation=file://%s' % self.path_user_installation,
++++         '--language=%s' % self.default_language,
+---         '-language=%s' % self.default_language,
+         ]
+\end{lstlisting}
+}
+
+\subsection{Criação da classe PDFGranulator}
+
+Na versão 1.24 do CloudOoo já existia a ``granularização'' de documentos comuns, entretanto esta não atendia a documentos PDF, assim neste trabalho esta funcionalidade foi desenvolvida.
+
+Para documentos a ferramenta utilizada era o libreoffice, a qual foi estudado o igual uso no começo deste desenvolvimento, mas por não atender de forma adequada foi trocada pela ferramenta Poppler que melhor representa uma suíte de menores ferramentas.
+
+No que respeito a imagens o Poppler fornece a ferramenta \textit{pdftoimages} e para o tratamento de textos existem \textit{pdftotext} e \textit{pdftohtml}.
+
+{\singlespace
+\begin{lstlisting}[caption=método getImageItemList do PDFGranulator,language=python,label={granim}]
+class PDFGranulator(object):
+
+  def __init__(self, base_folder_url, data, source_format, **kw):
+    self.file = File(base_folder_url, data, source_format)
+    self.environment = kw.get("env", {})
+    self.grain_directory = mkdtemp(dir=self.file.directory_name)
+
+  def getImageItemList(self):
+    command = ["pdftohtml", self.file.getUrl(), "%s/"%self.grain_directory]
+    stdout, stderr = Popen(command,
+                          stdout=PIPE,
+                          stderr=PIPE,
+                          close_fds=True,
+                          env=self.environment).communicate()
+    # XXX - PDF can be protect
+    if 'Erro' in stderr:
+      return False
+    else:
+      removeEqualImages(self.grain_directory)
+      images = glob("%s/*.*"%self.grain_directory)
+      imagesList = getImages(images)
+      return imagesList
+\end{lstlisting}
+}
+
+Após uma avaliação dessas ferramentas entretanto, apenas a ferramenta \textit{pdftohtml} foi utilizada para ambos os processos.
+No caso da ``granularização'' de imagens esta ferramenta separava corretamente as imagens numa pasta onde essas eram avalizadas pelo método \textit{removeEqualImages} e removidas caso fossem iguais, \ref{granim}. 
+
+{\singlespace
+\begin{lstlisting}[caption=método getTablesMatrix do PDFGranulator,language=python,label={granta}]
+ def getTablesMatrix(self):
+    output_url = NamedTemporaryFile(suffix=".xml",dir=self.file.directory_name).name
+    command = ["pdftohtml", "-xml",  self.file.getUrl(), output_url]
+    stdout, stderr = Popen(command,
+                          stdout=PIPE,
+                          stderr=PIPE,
+                          close_fds=True,
+                          env=self.environment).communicate()
+    # XXX - PDF can be protect
+    if 'Erro' in stderr:
+      return False
+    else:
+      output = etree.fromstring(open(output_url).read())
+      row_list = output.xpath('//text')
+      name,previous,next = '', '', ''
+      tables = {}
+      element = []
+      line = []
+      matrix = []
+      i,j,l,m = 0,0,0,0
+      old_x_left = 600
+      for x in row_list:
+        base_line = x.attrib['top']
+        base_column = x.attrib['left']
+        i += 1
+        for y in row_list[i:]:
+          if base_line == y.attrib['top']:
+            l += 1
+            line.append(get_text(y))
+            base_column = y.attrib['left']
+            row_list.remove(y)
+          elif base_column == y.attrib['left']:
+            m = l
+            if len(element) > 0:
+              element.append(get_text(y))
+            # In case name of the table is after table
+            if len(line) == 0:
+              next = get_text(x)
+              if next != None and len(next.split(':')) == 2:
+                name = next
+                next = ''
+            elif len(line) > 0:
+              element.append(line.pop())
+              element.append(get_text(y))
+          else:
+            if len(element) > 0:
+              line.insert(m-1,element)
+            l = 0
+            element = []
+            base_column = 0
+            break
+
+        if len(line)>0:
+          # In case name of the table is before table
+          previous = get_text(x.getprevious())
+          if previous != None and len(previous.split(':')) == 2:
+            name = previous
+            previous = ''
+          line.insert(0,get_text(x))
+          if len(line) > 1:
+            matrix.append(line)
+        line = []
+        if x.attrib['left'] < old_x_left and len(matrix)>0:
+          if len(matrix)>0:
+            j += 1
+            if name == '':
+              name = "Tabela %d" % j
+            name += " - pag %s" % x.getparent().attrib['number']
+            tables[name]= matrix
+          name = ''
+          matrix = []
+        old_x_left = x.attrib['left']
+      return tables
+
+\end{lstlisting}
+}
+
+É possível notar no código \ref{granta} que a ``granularização'' de tabelas em documentos PDF é consideravelmente mais complexa e trabalhosa. Em certos trechos o fim da extração do \textit{pdftohtml} o resultado é tratado como uma matriz em que pesquisasse pelas linhas e colunas da tabela tentando de certa forma ordená-los corretamente. 
+
+A complexidade da tabela se dá também em função de não haver um padrão próprio e corretamente adotavel para quantidade de linhas por colunas e vice versa, somado a falta de detalhe que a própria ferramenta consegue extrair.
+
+O resultado deste processo é a soma de todas as tabelas do documento PDF, ao contrário de documentos normais que tratados com LibreOffice podem apresentar apenas os títulos das tabelas deixando que o cliente faça a requisição apenas da tabela desejada que parece mais viavel a todos os projetos ligados ao CloudOoo, exceto a Biblioteca Digital, do NSI.
+
+
+\subsection{Criação do método granulateFile para granularização de documentos}
+
+Por ser o principal arquivo de conexão e inicialização do CloudOoo, poucas modificações foram realizadas no Manager \ref{manager}, entre elas a mais atual foi o método granulateFile que é diretamente responsável por retornar os grãos do processo de ``granularização'' para o cliente.
+
+{\singlespace
+\begin{lstlisting}[caption=método granulateFile do Manager,language=python,label={granfile}]
+  def granulateFile(self, data, source_format="odt"):
+    """This function allows BD NSI's project to completely granulate 
+    document file"""
+    if source_format.lower() == "pdf":
+      pdfgranulator = PDFGranulator(self._path_tmp_dir, decodestring(data), 'pdf',
+                                **self.kw)
+      table_list = pdfgranulator.getTableItemList()
+      grains = []
+      if table_list != 'PDF Protect or have no Table Item List':
+        tables = []
+        for item in table_list:
+          table = pdfgranulator.getTable(item)
+          tables.append(table)
+        grains = map(encodestring, tables)
+      images = pdfgranulator.getImageItemList()
+      if images != False:
+        # XXX - encodestring cant convert list
+        grains += map(encodestring, str(images))
+
+      # XXX - if has no grains
+      if grains == []:
+        return "This PDF is protect or has no grains"
+      return grains
+\end{lstlisting}
+}
+
+No código \ref{granfile} esta representado como o CloudOoo trata a requisição de granulateFile do cliente para o servidor, verificando o tipo de documento com base na sua extensão (\underline{source format}) e a reenderiza para o Handler responsável, que de forma geral retornará uma lista com os grãos de tabelas e imagens encontrados no documento.
+
+\subsection{Manutenção e extensão de código e testes}
+
+Este capítulo visa ressaltar algumas menores modificações que foram importantes para continuidade deste projeto.
+
+Entre essas modificações destacam-se:
+
+\begin{itemize}
+    \item{Modificações de reescrita em pequenos erros não reparados anteriormente;}
+    \item{Partes reescritas em função de melhorias em funcionalidades pré-existentes;}
+    \item{Pequenas funcionalidades criadas com intuito de reduzir código;}
+    \item{Pequenas funcionalidades criadas com intuito de reduzir tempo de execução dos processos;}
+    \item{Erros corrigidos em função do novo versionamento de alguma ferramenta interna;}
+    \item{Testes incrementados para garantir maior segurança às funcionalidades existentes;}
+    \item{Funcionalidades que começaram a ser escritas mas não foram concluídas.}
+\end{itemize}
+
+Essas modificações se dão pelo fato do CloudOoo continuar em desenvolvimento simultaneamente por dois grupos, que primeiramente visam seu interesse direto nesse produto, mas sem necessáriamente afastar-se do interesse de outros grupos nesta ferramenta.
+
 \subsection{Tabela de Novas funcionalidades}
 
 Na tabela \ref{funclooo} estão representadas algumas das funcionalidades do CloudOoo em função do que foi desenvolvido neste trabalho:
